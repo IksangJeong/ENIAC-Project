@@ -1,0 +1,443 @@
+@import "tailwindcss";
+
+/* ============================================
+   ENIAC Dashboard - edex-ui Inspired Theme
+   ============================================ */
+
+:root {
+  /* Primary Colors - Tron/Cyan Theme */
+  --color-primary-r: 170;
+  --color-primary-g: 207;
+  --color-primary-b: 209;
+  --color-primary: rgb(var(--color-primary-r), var(--color-primary-g), var(--color-primary-b));
+  --color-primary-hex: #aacfd1;
+
+  /* Background Colors */
+  --color-bg-black: #05080d;
+  --color-bg-light-black: #0a1015;
+  --color-bg-grey: #262828;
+
+  /* Accent Colors */
+  --color-accent-glow: rgba(170, 207, 209, 0.3);
+  --color-accent-dim: rgba(170, 207, 209, 0.1);
+  --color-accent-bright: rgba(170, 207, 209, 0.8);
+
+  /* Status Colors */
+  --color-success: #3cd66f;
+  --color-warning: #c5d63c;
+  --color-error: #eb0954;
+  --color-info: #5cffff;
+
+  /* Typography */
+  --font-main: 'Share Tech Mono', 'Fira Code', monospace;
+  --font-display: 'Orbitron', 'Share Tech Mono', sans-serif;
+
+  /* Spacing & Sizing */
+  --panel-border-width: 1px;
+  --panel-border-radius: 2px;
+  --grid-gap: 12px;
+
+  /* Animation */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* Tailwind Theme Integration */
+@theme inline {
+  --color-background: var(--color-bg-black);
+  --color-foreground: var(--color-primary);
+  --color-primary: var(--color-primary-hex);
+  --font-mono: var(--font-main);
+}
+
+/* ============================================
+   Global Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background: var(--color-bg-black);
+  color: var(--color-primary);
+  font-family: var(--font-main);
+  letter-spacing: 0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Grid Background Pattern (edex-ui style) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(90deg, var(--color-bg-light-black) 1px, transparent 1%) center,
+    linear-gradient(var(--color-bg-light-black) 1px, transparent 1%) center,
+    var(--color-bg-grey);
+  background-size: 20px 20px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(170, 207, 209, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-bright);
+}
+
+/* ============================================
+   Panel Styles (edex-ui inspired)
+   ============================================ */
+
+.panel {
+  position: relative;
+  background: rgba(5, 8, 13, 0.85);
+  border: var(--panel-border-width) solid var(--color-accent-glow);
+  backdrop-filter: blur(4px);
+}
+
+.panel::before,
+.panel::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: var(--panel-border-width) solid var(--color-accent-glow);
+}
+
+.panel::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.panel::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Panel Title Bar */
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-accent-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-primary);
+}
+
+.panel-content {
+  padding: 12px;
+}
+
+/* ============================================
+   Glitch Effect
+   ============================================ */
+
+@keyframes glitch {
+  0% {
+    text-shadow:
+      2px 0 var(--color-error),
+      -2px 0 var(--color-info);
+    transform: translate(0);
+  }
+  20% {
+    text-shadow:
+      -2px 0 var(--color-error),
+      2px 0 var(--color-info);
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    text-shadow:
+      2px 0 var(--color-error),
+      -2px 0 var(--color-info);
+    transform: translate(2px, -2px);
+  }
+  60% {
+    text-shadow:
+      -2px 0 var(--color-error),
+      2px 0 var(--color-info);
+    transform: translate(-2px, 0);
+  }
+  80% {
+    text-shadow:
+      2px 0 var(--color-error),
+      -2px 0 var(--color-info);
+    transform: translate(0, 2px);
+  }
+  100% {
+    text-shadow: none;
+    transform: translate(0);
+  }
+}
+
+.glitch {
+  animation: glitch 0.3s ease-in-out;
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* ============================================
+   Scanline Effect
+   ============================================ */
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(170, 207, 209, 0.1),
+    transparent
+  );
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+}
+
+/* ============================================
+   Glow Effects
+   ============================================ */
+
+.glow {
+  text-shadow:
+    0 0 5px var(--color-primary),
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary);
+}
+
+.glow-box {
+  box-shadow:
+    0 0 5px var(--color-accent-glow),
+    0 0 10px var(--color-accent-dim),
+    inset 0 0 5px var(--color-accent-dim);
+}
+
+/* ============================================
+   Typing Animation
+   ============================================ */
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: var(--color-primary); }
+}
+
+.typing-effect {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--color-primary);
+  animation:
+    typing 3s steps(40, end),
+    blink-caret 0.75s step-end infinite;
+}
+
+/* ============================================
+   Fade-in Animations
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes expandWidth {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+/* ============================================
+   Progress Bar Styles
+   ============================================ */
+
+.progress-bar {
+  position: relative;
+  height: 4px;
+  background: var(--color-accent-dim);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width var(--transition-normal);
+}
+
+.progress-bar-glow {
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+/* ============================================
+   Status Indicators
+   ============================================ */
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-online {
+  background: var(--color-success);
+  box-shadow: 0 0 6px var(--color-success);
+}
+
+.status-offline {
+  background: var(--color-error);
+  box-shadow: 0 0 6px var(--color-error);
+}
+
+.status-warning {
+  background: var(--color-warning);
+  box-shadow: 0 0 6px var(--color-warning);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============================================
+   Ticker Animation
+   ============================================ */
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.ticker-scroll {
+  animation: ticker 30s linear infinite;
+}
+
+/* ============================================
+   Responsive Breakpoints
+   ============================================ */
+
+/* TV/Large Desktop: 1920px+ */
+/* Desktop: 1280px - 1919px */
+/* Tablet: 768px - 1279px */
+/* Mobile: < 768px */
+
+@media (max-width: 768px) {
+  :root {
+    --grid-gap: 8px;
+  }
+
+  .panel-title {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+}
+
+/* ============================================
+   Kiosk Mode (TV Display)
+   ============================================ */
+
+.kiosk-mode {
+  cursor: none;
+}
+
+.kiosk-mode .hide-in-kiosk {
+  display: none !important;
+}
