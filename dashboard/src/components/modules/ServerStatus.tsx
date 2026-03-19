@@ -35,7 +35,7 @@ export function ServerStatus({ data, delay = 0 }: ServerStatusProps) {
       delay={delay}
       className="h-full"
     >
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* CPU Section */}
         <div>
           <div className="flex items-center justify-between mb-2">
@@ -53,8 +53,8 @@ export function ServerStatus({ data, delay = 0 }: ServerStatusProps) {
             size="md"
           />
 
-          {/* CPU Graph Placeholder */}
-          <div className="mt-2 h-12 border border-[var(--color-accent-dim)] relative overflow-hidden">
+          {/* CPU Graph Placeholder - Shorter on mobile */}
+          <div className="mt-2 h-10 sm:h-12 border border-[var(--color-accent-dim)] relative overflow-hidden">
             <CPUGraph value={data?.cpu ?? 0} />
           </div>
         </div>
@@ -65,18 +65,29 @@ export function ServerStatus({ data, delay = 0 }: ServerStatusProps) {
             <span className="text-xs uppercase tracking-wider opacity-70">
               MEMORY
             </span>
-            <span className="text-sm font-mono">
+            <span className="text-xs sm:text-sm font-mono">
               {data
                 ? `${(data.ram.used / 1024).toFixed(1)} / ${(data.ram.total / 1024).toFixed(1)} GB`
                 : "-- / -- GB"}
             </span>
           </div>
-          <PointMap
-            value={data?.ram.percentage ?? 0}
-            rows={6}
-            cols={24}
-            className="mb-2"
-          />
+          {/* PointMap - Smaller grid on mobile for performance */}
+          <div className="hidden sm:block">
+            <PointMap
+              value={data?.ram.percentage ?? 0}
+              rows={6}
+              cols={24}
+              className="mb-2"
+            />
+          </div>
+          <div className="block sm:hidden">
+            <PointMap
+              value={data?.ram.percentage ?? 0}
+              rows={4}
+              cols={16}
+              className="mb-2"
+            />
+          </div>
           <ProgressBar
             value={data?.ram.percentage ?? 0}
             showValue={false}
@@ -86,20 +97,20 @@ export function ServerStatus({ data, delay = 0 }: ServerStatusProps) {
         </div>
 
         {/* Additional Stats */}
-        <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[var(--color-accent-dim)]">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 border-t border-[var(--color-accent-dim)]">
           <div>
-            <span className="text-[10px] uppercase tracking-wider opacity-50 block mb-1">
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider opacity-50 block mb-1">
               UPTIME
             </span>
-            <span className="text-sm font-mono">
+            <span className="text-xs sm:text-sm font-mono">
               {data ? formatUptime(data.uptime) : "--:--:--"}
             </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider opacity-50 block mb-1">
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider opacity-50 block mb-1">
               TEMP
             </span>
-            <span className="text-sm font-mono">
+            <span className="text-xs sm:text-sm font-mono">
               {data?.temperature ? `${data.temperature}°C` : "--°C"}
             </span>
           </div>

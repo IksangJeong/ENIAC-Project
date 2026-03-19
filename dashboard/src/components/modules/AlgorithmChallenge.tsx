@@ -55,7 +55,7 @@ function ActiveChallengeView({
   const config = difficultyConfig[challenge.difficulty];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Status Badge */}
       <motion.div
         className="flex items-center gap-2"
@@ -68,16 +68,16 @@ function ActiveChallengeView({
           animate={{ opacity: [1, 0.3, 1] }}
           transition={{ duration: 0.5, repeat: Infinity }}
         />
-        <span className="text-[10px] uppercase tracking-wider text-[var(--color-error)]">
+        <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-error)]">
           LIVE NOW
         </span>
       </motion.div>
 
       {/* Problem Title */}
       <div>
-        <h3 className="text-lg font-medium mb-1">{challenge.problemTitle}</h3>
+        <h3 className="text-base sm:text-lg font-medium mb-1 leading-tight">{challenge.problemTitle}</h3>
         <span
-          className="text-[10px] uppercase tracking-wider px-2 py-0.5 border"
+          className="text-[9px] sm:text-[10px] uppercase tracking-wider px-1.5 sm:px-2 py-0.5 border"
           style={{ borderColor: config.color, color: config.color }}
         >
           {config.label}
@@ -102,45 +102,45 @@ function ActiveChallengeView({
 
       {/* Participants */}
       <div className="space-y-2">
-        <span className="text-[10px] uppercase tracking-wider opacity-50">
+        <span className="text-[9px] sm:text-[10px] uppercase tracking-wider opacity-50">
           PARTICIPANTS
         </span>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           {challenge.participants.slice(0, 6).map((participant, index) => (
             <motion.div
               key={participant.userId}
               className={clsx(
-                "flex items-center gap-2 p-1.5 border",
+                "flex items-center gap-1.5 sm:gap-2 p-1.5 border",
                 participant.solved
                   ? "border-[var(--color-success)] bg-[var(--color-success)] bg-opacity-10"
                   : "border-[var(--color-accent-dim)]"
               )}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: delay + 0.1 * index }}
+              transition={{ delay: delay + 0.05 * index }}
             >
               {participant.avatar ? (
                 <img
                   src={participant.avatar}
                   alt={participant.username}
-                  className="w-5 h-5 rounded-full"
+                  className="w-5 h-5 rounded-full flex-shrink-0"
                 />
               ) : (
-                <div className="w-5 h-5 rounded-full bg-[var(--color-accent-dim)] flex items-center justify-center text-[9px]">
+                <div className="w-5 h-5 rounded-full bg-[var(--color-accent-dim)] flex items-center justify-center text-[8px] sm:text-[9px] flex-shrink-0">
                   {participant.username[0]}
                 </div>
               )}
-              <span className="text-xs truncate flex-1">
+              <span className="text-[10px] sm:text-xs truncate flex-1">
                 {participant.username}
               </span>
               {participant.solved && (
-                <span className="text-[var(--color-success)] text-xs">✓</span>
+                <span className="text-[var(--color-success)] text-xs flex-shrink-0">✓</span>
               )}
             </motion.div>
           ))}
         </div>
         {challenge.participants.length > 6 && (
-          <div className="text-[10px] text-center opacity-50">
+          <div className="text-[9px] sm:text-[10px] text-center opacity-50">
             + {challenge.participants.length - 6} MORE
           </div>
         )}
@@ -158,28 +158,28 @@ function NoChallengeView({
 }) {
   return (
     <motion.div
-      className="flex flex-col items-center justify-center h-full min-h-[200px]"
+      className="flex flex-col items-center justify-center h-full min-h-[150px] sm:min-h-[200px]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay }}
     >
       <motion.div
-        className="text-4xl mb-4 opacity-30"
+        className="text-3xl sm:text-4xl mb-3 sm:mb-4 opacity-30"
         animate={{ rotate: [0, 10, -10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
         ⚔️
       </motion.div>
-      <div className="text-sm opacity-70 text-center">
+      <div className="text-xs sm:text-sm opacity-70 text-center">
         NO ACTIVE CHALLENGE
       </div>
-      <div className="text-[10px] uppercase tracking-wider opacity-30 mt-2">
+      <div className="text-[9px] sm:text-[10px] uppercase tracking-wider opacity-30 mt-2">
         {completedCount} CHALLENGES COMPLETED TODAY
       </div>
 
       {/* Decorative Line */}
       <motion.div
-        className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent mt-4"
+        className="w-20 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent mt-3 sm:mt-4"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ delay: delay + 0.3 }}

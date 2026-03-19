@@ -80,27 +80,27 @@ function ScheduleItem({ schedule, delay }: ScheduleItemProps) {
 
   return (
     <motion.div
-      className="flex gap-3 p-2 border border-[var(--color-accent-dim)] hover:border-[var(--color-accent-glow)] transition-colors"
+      className="flex gap-2 sm:gap-3 p-2 border border-[var(--color-accent-dim)] hover:border-[var(--color-accent-glow)] transition-colors active:bg-[var(--color-accent-dim)] active:bg-opacity-20"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
       {/* Date Block */}
-      <div className="flex flex-col items-center justify-center w-12 py-1 border-r border-[var(--color-accent-dim)]">
-        <span className="text-lg font-bold leading-none">
+      <div className="flex flex-col items-center justify-center w-10 sm:w-12 py-1 border-r border-[var(--color-accent-dim)] flex-shrink-0">
+        <span className="text-base sm:text-lg font-bold leading-none">
           {date.getDate()}
         </span>
-        <span className="text-[9px] uppercase tracking-wider opacity-50">
+        <span className="text-[8px] sm:text-[9px] uppercase tracking-wider opacity-50">
           {date.toLocaleDateString("en-US", { month: "short" })}
         </span>
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        {/* Type Badge */}
-        <div className="flex items-center gap-2 mb-1">
+        {/* Type Badge & D-day for mobile */}
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
           <span
-            className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 border"
+            className="text-[8px] sm:text-[9px] uppercase tracking-wider px-1 sm:px-1.5 py-0.5 border"
             style={{
               borderColor: config.color,
               color: config.color,
@@ -110,20 +110,31 @@ function ScheduleItem({ schedule, delay }: ScheduleItemProps) {
           </span>
           {daysUntil <= 3 && daysUntil >= 0 && (
             <motion.span
-              className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 bg-[var(--color-error)] bg-opacity-20 text-[var(--color-error)]"
+              className="text-[8px] sm:text-[9px] uppercase tracking-wider px-1 sm:px-1.5 py-0.5 bg-[var(--color-error)] bg-opacity-20 text-[var(--color-error)]"
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             >
               D-{daysUntil}
             </motion.span>
           )}
+          {/* D-day on mobile (inline with badges) */}
+          <span
+            className={clsx(
+              "sm:hidden text-[9px] font-mono ml-auto",
+              daysUntil === 0 && "text-[var(--color-error)]",
+              daysUntil === 1 && "text-[var(--color-warning)]",
+              daysUntil > 1 && "opacity-50"
+            )}
+          >
+            {daysUntil === 0 ? "TODAY" : `D-${daysUntil}`}
+          </span>
         </div>
 
         {/* Title */}
-        <div className="text-sm truncate mb-1">{schedule.title}</div>
+        <div className="text-xs sm:text-sm truncate mb-1">{schedule.title}</div>
 
         {/* Details */}
-        <div className="flex items-center gap-3 text-[10px] opacity-50">
+        <div className="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[10px] opacity-50">
           <span>
             {date.toLocaleTimeString("ko-KR", {
               hour: "2-digit",

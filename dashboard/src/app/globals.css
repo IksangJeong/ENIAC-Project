@@ -411,22 +411,330 @@ body::before {
 }
 
 /* ============================================
+   Safe Area & Mobile Variables
+   ============================================ */
+
+:root {
+  /* Safe area insets for notched devices */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* Mobile-specific sizing */
+  --mobile-header-height: 48px;
+  --mobile-nav-height: 56px;
+  --mobile-tab-icon-size: 24px;
+  --mobile-touch-target: 44px;
+}
+
+/* ============================================
    Responsive Breakpoints
    ============================================ */
 
-/* TV/Large Desktop: 1920px+ */
-/* Desktop: 1280px - 1919px */
-/* Tablet: 768px - 1279px */
-/* Mobile: < 768px */
+/*
+  Breakpoint System:
+  - Mobile Portrait:  < 640px (default mobile-first)
+  - Mobile Landscape: 640px - 767px (sm)
+  - Tablet:           768px - 1023px (md)
+  - Desktop:          1024px - 1279px (lg)
+  - Large Desktop:    1280px+ (xl)
+  - TV/Kiosk:         1920px+ (2xl)
+*/
 
-@media (max-width: 768px) {
+/* Mobile (default - mobile first approach) */
+@media (max-width: 767px) {
   :root {
     --grid-gap: 8px;
+  }
+
+  html, body {
+    /* Allow scrolling on mobile */
+    overflow: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .panel-title {
     font-size: 10px;
     padding: 6px 10px;
+  }
+
+  .panel-content {
+    padding: 10px;
+  }
+
+  /* Simplified panel corners on mobile */
+  .panel::before,
+  .panel::after {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Optimized glow for mobile performance */
+  .glow {
+    text-shadow:
+      0 0 5px var(--color-primary),
+      0 0 10px var(--color-primary);
+  }
+
+  .glow-box {
+    box-shadow:
+      0 0 4px var(--color-accent-glow),
+      inset 0 0 3px var(--color-accent-dim);
+  }
+
+  /* Grid background larger on mobile to reduce banding */
+  body::before {
+    background-size: 30px 30px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --grid-gap: 10px;
+  }
+
+  .panel-title {
+    font-size: 10px;
+    padding: 7px 11px;
+  }
+}
+
+/* Desktop and above */
+@media (min-width: 1024px) {
+  :root {
+    --grid-gap: 12px;
+  }
+
+  html, body {
+    overflow: hidden;
+  }
+}
+
+/* ============================================
+   Mobile Layout Utilities
+   ============================================ */
+
+/* Mobile-only visibility */
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* Desktop-only visibility */
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Mobile Header Styles */
+.mobile-header {
+  height: var(--mobile-header-height);
+  padding-top: var(--safe-area-top);
+  background: rgba(5, 8, 13, 0.95);
+  border-bottom: 1px solid var(--color-accent-glow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Mobile Navigation (Bottom Tab Bar) */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--mobile-nav-height) + var(--safe-area-bottom));
+  padding-bottom: var(--safe-area-bottom);
+  background: rgba(5, 8, 13, 0.98);
+  border-top: 1px solid var(--color-accent-glow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--mobile-touch-target);
+  min-height: var(--mobile-touch-target);
+  padding: 4px 8px;
+  color: var(--color-accent-glow);
+  transition: all var(--transition-fast);
+}
+
+.mobile-nav-item.active {
+  color: var(--color-primary);
+}
+
+.mobile-nav-item.active::after {
+  content: "";
+  position: absolute;
+  bottom: calc(var(--safe-area-bottom) + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--color-primary);
+}
+
+.mobile-nav-icon {
+  width: var(--mobile-tab-icon-size);
+  height: var(--mobile-tab-icon-size);
+  margin-bottom: 2px;
+}
+
+.mobile-nav-label {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Mobile Content Area */
+.mobile-content {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--grid-gap);
+  padding-bottom: calc(var(--mobile-nav-height) + var(--safe-area-bottom) + var(--grid-gap));
+}
+
+/* ============================================
+   Mobile Panel Styles
+   ============================================ */
+
+.panel-compact .panel-title {
+  padding: 6px 10px;
+  font-size: 9px;
+}
+
+.panel-compact .panel-content {
+  padding: 8px;
+}
+
+.panel-compact::before,
+.panel-compact::after {
+  width: 5px;
+  height: 5px;
+}
+
+/* ============================================
+   Mobile Quote Banner
+   ============================================ */
+
+.quote-banner {
+  position: relative;
+  padding: 10px 12px;
+  margin-bottom: var(--grid-gap);
+  background: linear-gradient(
+    135deg,
+    rgba(170, 207, 209, 0.05) 0%,
+    rgba(5, 8, 13, 0.95) 100%
+  );
+  border: 1px solid var(--color-accent-dim);
+  border-left: 2px solid var(--color-primary);
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.quote-banner::before {
+  content: '"';
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 20px;
+  font-family: var(--font-display);
+  color: var(--color-accent-glow);
+  opacity: 0.5;
+}
+
+.quote-banner-author {
+  margin-top: 6px;
+  font-size: 9px;
+  font-style: normal;
+  text-align: right;
+  color: var(--color-accent-bright);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   Pull to Refresh
+   ============================================ */
+
+.pull-to-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.pull-to-refresh.pulling {
+  height: 60px;
+}
+
+.pull-to-refresh-indicator {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-accent-dim);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.pull-to-refresh.refreshing .pull-to-refresh-indicator {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Reduced Motion Support
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scanline::after {
+    display: none;
+  }
+
+  .glitch,
+  .glitch-hover:hover {
+    animation: none;
+    text-shadow: none;
+  }
+
+  .status-dot {
+    animation: none;
   }
 }
 
