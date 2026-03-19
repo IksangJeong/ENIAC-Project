@@ -11,6 +11,8 @@ import {
   Schedule,
   AlgorithmChallenge,
 } from "@/components/modules";
+import { MobileLayout } from "@/components/mobile";
+import { useDeviceType } from "@/hooks/useDeviceType";
 import {
   mockServerStatus,
   mockUsers,
@@ -27,6 +29,7 @@ import type { ServerStatus as ServerStatusType } from "@/types";
 export default function DashboardPage() {
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
+  const deviceType = useDeviceType();
 
   // Simulate real-time server status updates
   useEffect(() => {
@@ -49,6 +52,32 @@ export default function DashboardPage() {
 
   const tickerItems = announcementsToTickerItems(mockAnnouncements);
 
+  // Mobile/Tablet Layout
+  if (deviceType === 'mobile' || deviceType === 'tablet') {
+    return (
+      <>
+        <MobileLayout
+          serverStatusModule={<ServerStatus data={serverStatus} delay={0} />}
+          onlineUsersModule={
+            <OnlineUsers
+              users={mockUsers}
+              crowdLevel={mockCrowdLevel}
+              delay={0}
+            />
+          }
+          commitRankingModule={<CommitRanking rankings={mockCommitRankings} delay={0} />}
+          scheduleModule={<Schedule schedules={mockSchedules} delay={0} />}
+          algorithmChallengeModule={<AlgorithmChallenge challenges={mockChallenges} delay={0} />}
+          quote={mockQuote}
+          isConnected={isConnected}
+        />
+        {/* Boot Animation for mobile too */}
+        <BootAnimation />
+      </>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Scanline Effect Overlay */}

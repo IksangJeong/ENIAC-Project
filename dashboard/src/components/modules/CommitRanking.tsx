@@ -25,14 +25,14 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
       delay={delay}
       className="h-full"
     >
-      {/* Period Toggle */}
-      <div className="flex gap-2 mb-4">
+      {/* Period Toggle - Touch-friendly on mobile */}
+      <div className="flex gap-2 mb-3 sm:mb-4">
         {(["today", "week"] as Period[]).map((p) => (
           <button
             key={p}
             onClick={() => setPeriod(p)}
             className={clsx(
-              "px-3 py-1 text-[10px] uppercase tracking-wider transition-all",
+              "px-3 py-1.5 sm:py-1 text-[10px] uppercase tracking-wider transition-all min-h-[36px] sm:min-h-0",
               "border",
               period === p
                 ? "border-[var(--color-primary)] bg-[var(--color-primary)] bg-opacity-10"
@@ -45,20 +45,20 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
       </div>
 
       {/* Rankings List */}
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         {rankings.length > 0 ? (
           rankings.slice(0, 5).map((user, index) => (
             <motion.div
               key={user.userId}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2 sm:gap-3 py-1 sm:py-0"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: delay + 0.1 * index }}
+              transition={{ delay: delay + 0.05 * index }}
             >
               {/* Rank Number */}
               <div
                 className={clsx(
-                  "w-6 h-6 flex items-center justify-center text-sm font-bold",
+                  "w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0",
                   index === 0 && "text-[var(--color-warning)] glow",
                   index === 1 && "text-[var(--color-primary)]",
                   index === 2 && "text-[var(--color-info)]",
@@ -74,14 +74,14 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
                   src={user.avatar}
                   alt={user.username}
                   className={clsx(
-                    "w-8 h-8 rounded-full border",
+                    "w-8 h-8 rounded-full border flex-shrink-0",
                     index === 0
                       ? "border-[var(--color-warning)]"
                       : "border-[var(--color-accent-glow)]"
                   )}
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-[var(--color-accent-dim)] flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-full bg-[var(--color-accent-dim)] flex items-center justify-center text-xs flex-shrink-0">
                   {user.username[0].toUpperCase()}
                 </div>
               )}
@@ -89,8 +89,8 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
               {/* User Info & Progress */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm truncate">{user.username}</span>
-                  <span className="text-sm font-mono flex items-center gap-1">
+                  <span className="text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{user.username}</span>
+                  <span className="text-xs sm:text-sm font-mono flex items-center gap-1">
                     {user.commits}
                     {user.trend && (
                       <TrendIcon trend={user.trend} />
@@ -108,7 +108,7 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
             </motion.div>
           ))
         ) : (
-          <div className="text-center py-8 opacity-50">
+          <div className="text-center py-6 sm:py-8 opacity-50">
             <div className="text-2xl mb-2">0</div>
             <div className="text-xs">NO COMMITS YET</div>
           </div>
@@ -117,7 +117,7 @@ export function CommitRanking({ rankings, delay = 0 }: CommitRankingProps) {
 
       {/* Total Stats */}
       {rankings.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-[var(--color-accent-dim)]">
+        <div className="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-[var(--color-accent-dim)]">
           <div className="flex justify-between text-xs">
             <span className="opacity-50">TOTAL COMMITS</span>
             <span className="font-mono">
