@@ -2,26 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Header, Ticker, DashboardGrid, LeftColumn, CenterColumn, RightColumn, announcementsToTickerItems } from "@/components/layout";
+import { PageLayout } from "@/components/layout";
 import {
-  ServerStatus,
-  OnlineUsers,
-  QuoteOfDay,
-  CommitRanking,
-  Schedule,
-  AlgorithmChallenge,
-} from "@/components/modules";
-import { MobileLayout } from "@/components/mobile";
-import { useDeviceType } from "@/hooks/useDeviceType";
+  ClockQuotePanel,
+  CompactStatsGrid,
+  CommitPreview,
+  AlgorithmSummary,
+  ActiveNodesPreview,
+  EventPreview,
+} from "@/components/dashboard";
 import {
   mockServerStatus,
   mockUsers,
-  mockCrowdLevel,
   mockCommitRankings,
   mockSchedules,
   mockQuote,
   mockChallenges,
-  mockAnnouncements,
   getRandomServerStatus,
 } from "@/lib/mockData";
 import type { ServerStatus as ServerStatusType } from "@/types";
@@ -29,7 +25,7 @@ import type { ServerStatus as ServerStatusType } from "@/types";
 export default function DashboardPage() {
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
-  const deviceType = useDeviceType();
+  const [showBoot, setShowBoot] = useState(true);
 
   // Simulate real-time server status updates
   useEffect(() => {
@@ -41,118 +37,126 @@ export default function DashboardPage() {
 
   // Simulate connection status
   useEffect(() => {
-    // Random disconnection simulation (for demo)
     const checkConnection = () => {
-      // 95% chance of being connected
       setIsConnected(Math.random() > 0.05);
     };
     const interval = setInterval(checkConnection, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  const tickerItems = announcementsToTickerItems(mockAnnouncements);
+  // Boot animation
+  useEffect(() => {
+    const timer = setTimeout(() => setShowBoot(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Mobile/Tablet Layout
-  if (deviceType === 'mobile' || deviceType === 'tablet') {
-    return (
-      <>
-        <MobileLayout
-          serverStatusModule={<ServerStatus data={serverStatus} delay={0} />}
-          onlineUsersModule={
-            <OnlineUsers
-              users={mockUsers}
-              crowdLevel={mockCrowdLevel}
-              delay={0}
-            />
-          }
-          commitRankingModule={<CommitRanking rankings={mockCommitRankings} delay={0} />}
-          scheduleModule={<Schedule schedules={mockSchedules} delay={0} />}
-          algorithmChallengeModule={<AlgorithmChallenge challenges={mockChallenges} delay={0} />}
-          quote={mockQuote}
-          isConnected={isConnected}
-        />
-        {/* Boot Animation for mobile too */}
-        <BootAnimation />
-      </>
-    );
-  }
-
-  // Desktop Layout
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* Scanline Effect Overlay */}
-      <div className="fixed inset-0 pointer-events-none scanline z-50" />
-
-      {/* Header */}
-      <Header isConnected={isConnected} />
-
-      {/* Main Dashboard Content */}
-      <main className="flex-1 overflow-hidden">
-        <DashboardGrid>
-          {/* Left Column */}
-          <LeftColumn>
-            <ServerStatus data={serverStatus} delay={0.1} />
-            <OnlineUsers
-              users={mockUsers}
-              crowdLevel={mockCrowdLevel}
-              delay={0.2}
-            />
-          </LeftColumn>
-
-          {/* Center Column */}
-          <CenterColumn>
-            <QuoteOfDay quote={mockQuote} delay={0.15} />
-            <div className="flex-1">
-              <Schedule schedules={mockSchedules} delay={0.25} />
+    <>
+      <PageLayout activePage="dashboard" isConnected={isConnected}>
+        {/* Dashboard Grid - Scrollable on mobile, viewport-fit on desktop */}
+        <div className="lg:h-full grid gap-3 lg:gap-4 grid-rows-[auto_auto_auto] lg:grid-rows-[auto_1fr_1fr] pb-4 lg:pb-0">
+          {/* Row 1: Stats + Clock/Quote */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
+            {/* Stats Grid - 8 cols on desktop */}
+            <div className="lg:col-span-8">
+              <CompactStatsGrid data={serverStatus} delay={0.1} />
             </div>
-          </CenterColumn>
+            {/* Clock + Quote - 4 cols on desktop */}
+            <div className="lg:col-span-4 hidden lg:block">
+              <ClockQuotePanel quote={mockQuote} delay={0.2} />
+            </div>
+          </div>
 
-          {/* Right Column */}
-          <RightColumn>
-            <CommitRanking rankings={mockCommitRankings} delay={0.2} />
-            <AlgorithmChallenge challenges={mockChallenges} delay={0.3} />
-          </RightColumn>
-        </DashboardGrid>
-      </main>
+          {/* Row 2: Commit + Algorithm | Active Nodes */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 lg:min-h-0">
+            {/* Left Section - 8 cols */}
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
+              <div className="min-h-[180px]">
+                <CommitPreview rankings={mockCommitRankings} delay={0.3} />
+              </div>
+              <div className="min-h-[180px]">
+                <AlgorithmSummary challenges={mockChallenges} delay={0.4} />
+              </div>
+            </div>
+            {/* Right Section - 4 cols */}
+            <div className="lg:col-span-4 min-h-[180px]">
+              <ActiveNodesPreview users={mockUsers} delay={0.5} />
+            </div>
+          </div>
 
-      {/* Bottom Ticker */}
-      <Ticker items={tickerItems} speed={25} />
+          {/* Row 3: Event Log (full width on mobile, right side on desktop) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 lg:min-h-0">
+            {/* Placeholder for left side on desktop */}
+            <div className="hidden lg:block lg:col-span-8">
+              <BroadcastPanel delay={0.6} />
+            </div>
+            {/* Event Log - Right side */}
+            <div className="lg:col-span-4 min-h-[180px]">
+              <EventPreview schedules={mockSchedules} delay={0.7} />
+            </div>
+          </div>
+        </div>
+      </PageLayout>
 
       {/* Boot Animation Overlay */}
-      <BootAnimation />
-    </div>
+      {showBoot && <BootAnimation />}
+    </>
+  );
+}
+
+// Broadcast Panel for the empty space
+function BroadcastPanel({ delay = 0 }: { delay?: number }) {
+  return (
+    <motion.div
+      className="h-full border border-[var(--color-primary)]/10 bg-[var(--color-bg-dark)] p-3 rounded-sm panel-corners flex flex-col"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+          System Broadcasts
+        </h3>
+        <svg className="w-4 h-4 text-[var(--color-primary)]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+        </svg>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center opacity-50">
+          <motion.div
+            className="w-8 h-8 mx-auto mb-2 border border-[var(--color-primary)]/20 rounded-full flex items-center justify-center"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          >
+            <div className="w-2 h-2 bg-[var(--color-primary)]/30 rounded-full" />
+          </motion.div>
+          <p className="text-[10px] uppercase tracking-widest">
+            Monitoring Active
+          </p>
+          <p className="text-[8px] text-[var(--color-text-secondary)] mt-1">
+            No critical broadcasts
+          </p>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
 // Boot Animation Component
 function BootAnimation() {
-  const [show, setShow] = useState(true);
   const [phase, setPhase] = useState<"logo" | "loading" | "done">("logo");
 
   useEffect(() => {
-    // Logo phase
-    const logoTimer = setTimeout(() => {
-      setPhase("loading");
-    }, 1500);
-
-    // Loading phase
-    const loadingTimer = setTimeout(() => {
-      setPhase("done");
-    }, 3000);
-
-    // Hide animation
-    const hideTimer = setTimeout(() => {
-      setShow(false);
-    }, 3500);
-
+    const logoTimer = setTimeout(() => setPhase("loading"), 1000);
+    const loadingTimer = setTimeout(() => setPhase("done"), 2000);
     return () => {
       clearTimeout(logoTimer);
       clearTimeout(loadingTimer);
-      clearTimeout(hideTimer);
     };
   }, []);
-
-  if (!show) return null;
 
   return (
     <motion.div
@@ -160,6 +164,7 @@ function BootAnimation() {
       initial={{ opacity: 1 }}
       animate={{ opacity: phase === "done" ? 0 : 1 }}
       transition={{ duration: 0.5 }}
+      style={{ pointerEvents: phase === "done" ? "none" : "auto" }}
     >
       <div className="text-center">
         {phase === "logo" && (
@@ -169,7 +174,7 @@ function BootAnimation() {
             transition={{ type: "spring", duration: 0.5 }}
           >
             <motion.h1
-              className="text-6xl font-bold tracking-widest glow"
+              className="text-5xl font-bold tracking-widest glow"
               animate={{
                 textShadow: [
                   "0 0 10px var(--color-primary)",
@@ -182,7 +187,7 @@ function BootAnimation() {
               ENIAC
             </motion.h1>
             <motion.p
-              className="text-sm tracking-[0.5em] mt-2 opacity-50"
+              className="text-xs tracking-[0.5em] mt-2 opacity-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               transition={{ delay: 0.3 }}
@@ -196,21 +201,18 @@ function BootAnimation() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-4"
+            className="space-y-3"
           >
-            <div className="text-sm tracking-wider opacity-70">
-              INITIALIZING SYSTEM...
+            <div className="text-xs tracking-wider opacity-70">
+              INITIALIZING...
             </div>
-            <div className="w-48 h-1 bg-[var(--color-accent-dim)] mx-auto overflow-hidden">
+            <div className="w-40 h-1 bg-[var(--color-accent-dim)] mx-auto overflow-hidden">
               <motion.div
                 className="h-full bg-[var(--color-primary)]"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
-                transition={{ duration: 1.5 }}
+                transition={{ duration: 1 }}
               />
-            </div>
-            <div className="text-[10px] tracking-wider opacity-30">
-              LOADING MODULES...
             </div>
           </motion.div>
         )}
