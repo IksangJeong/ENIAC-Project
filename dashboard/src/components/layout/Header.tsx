@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { GlitchText, Clock, ConnectionStatus } from "@/components/ui";
+import { useAuthStore } from "@/stores/authStore";
 import clsx from "clsx";
 
 interface HeaderProps {
@@ -10,6 +12,19 @@ interface HeaderProps {
 }
 
 export function Header({ isConnected = true, className }: HeaderProps) {
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    // API 호출 (옵션)
+    await fetch("/api/auth/logout", { method: "POST" });
+    
+    // 클라이언트 상태 초기화
+    logout();
+    
+    // 로그인 페이지로 리다이렉트
+    router.push("/auth/login");
+  };
   return (
     <motion.header
       className={clsx(
@@ -71,6 +86,26 @@ export function Header({ isConnected = true, className }: HeaderProps) {
 
       {/* Right Section */}
       <div className="flex items-center gap-6">
+        {/* User Info & Logout */}
+        {user && (
+          <div className="flex items-center gap-3 px-3 py-2 border border-cyan-500/30 rounded">
+            <div className="text-right">
+              <p className="text-xs font-mono text-cyan-400">{user.username}</p>
+              <p className="text-[9px] text-cyan-500/70 uppercase tracking-wider">
+                Online
+              </p>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleLogout}
+              className="ml-2 px-3 py-1 text-xs font-mono bg-red-500/20 border border-red-500/50 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+            >
+              LOGOUT
+            </motion.button>
+          </div>
+        )}
+
         {/* Connection Status */}
         <ConnectionStatus isConnected={isConnected} />
 

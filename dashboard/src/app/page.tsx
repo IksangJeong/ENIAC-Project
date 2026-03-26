@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Header, Ticker, DashboardGrid, LeftColumn, CenterColumn, RightColumn, announcementsToTickerItems } from "@/components/layout";
 import {
   ServerStatus,
@@ -27,6 +28,14 @@ import {
 import type { ServerStatus as ServerStatusType } from "@/types";
 
 export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardPageContent />
+    </ProtectedRoute>
+  );
+}
+
+function DashboardPageContent() {
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
   const deviceType = useDeviceType();
