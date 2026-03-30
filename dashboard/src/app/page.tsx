@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/layout";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import {
   ClockQuotePanel,
   CompactStatsGrid,
@@ -23,6 +24,14 @@ import {
 import type { ServerStatus as ServerStatusType } from "@/types";
 
 export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
+  );
+}
+
+function DashboardContent() {
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
   const [showBoot, setShowBoot] = useState(true);
