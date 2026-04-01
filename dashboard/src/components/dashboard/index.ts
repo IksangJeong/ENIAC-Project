@@ -4,3 +4,6 @@ export { CommitPreview } from "./CommitPreview";
 export { AlgorithmSummary } from "./AlgorithmSummary";
 export { ActiveNodesPreview } from "./ActiveNodesPreview";
 export { EventPreview } from "./EventPreview";
+export { MemberCard } from "./MemberCard";
+export { MemberDetailModal } from "./MemberDetailModal";
+export { ProfileSettingsModal } from "./ProfileSettingsModal";

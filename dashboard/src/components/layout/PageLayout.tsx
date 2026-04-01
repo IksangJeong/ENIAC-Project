@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { TopNavbar } from "./TopNavbar";
 import { Footer } from "./Footer";
+import { ProfileSettingsModal } from "@/components/dashboard";
+import { useAuthStore } from "@/stores/authStore";
 import clsx from "clsx";
 
 export type PageType = "dashboard" | "members" | "schedule" | "github" | "algorithm";
@@ -21,6 +23,8 @@ export function PageLayout({
   isConnected = true,
   className,
 }: PageLayoutProps) {
+  const { isProfileSettingsOpen, setProfileSettingsOpen } = useAuthStore();
+
   return (
     <div className="h-screen flex flex-col bg-[var(--color-bg-black)]">
       {/* Scanline Effect Overlay */}
@@ -51,6 +55,12 @@ export function PageLayout({
 
       {/* Footer - Fixed Height */}
       <Footer />
+
+      {/* Global Modals - Rendered outside of Navbar/Main to avoid clipping */}
+      <ProfileSettingsModal 
+        isOpen={isProfileSettingsOpen} 
+        onClose={() => setProfileSettingsOpen(false)} 
+      />
     </div>
   );
 }

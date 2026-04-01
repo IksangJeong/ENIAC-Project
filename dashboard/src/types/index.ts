@@ -1,3 +1,5 @@
+import { DepartmentId } from "@/lib/constants";
+
 // ============================================
 // ENIAC Dashboard - Type Definitions
 // ============================================
@@ -15,12 +17,36 @@ export interface ServerStatus {
 }
 
 // User Types
+export type UserRole = "admin" | "member" | "viewer";
+
 export interface User {
   id: string;
   name: string;
+  username?: string;
+  email?: string;
   avatar?: string;
+  role?: UserRole;
   status: "online" | "offline" | "away";
+  statusMessage?: string;
+  metrics?: {
+    todayCommits: number;
+    weeklyActivity: number[]; // Array of commit counts for last 7 days
+  };
   lastSeen?: string;
+}
+
+// Member Types (Extended from User for the Members Page)
+export interface Member extends User {
+  position: string; // e.g., "Lead Developer", "UI Designer", "PM"
+  department: DepartmentId; // Strictly typed now
+  bio?: string;
+  skills: string[];
+  socialLinks?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+  joinDate: string;
 }
 
 // Crowd Level

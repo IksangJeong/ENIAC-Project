@@ -37,7 +37,7 @@ export function TopNavbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout, setProfileSettingsOpen } = useAuthStore();
 
   // Determine active page from pathname or prop
   const currentPage = activePage || navLinks.find(link => link.href === pathname)?.id || "dashboard";
@@ -121,7 +121,10 @@ export function TopNavbar({
 
           {/* User Info (Desktop) */}
           <div className="hidden md:flex items-center gap-2 pl-3 lg:pl-5 border-l border-[var(--color-primary)]/20">
-            <div className="text-right">
+            <button 
+              onClick={() => setProfileSettingsOpen(true)}
+              className="text-right hover:opacity-80 transition-opacity"
+            >
               <div className="flex items-center justify-end gap-1">
                 {user?.role === "admin" && (
                   <motion.span
@@ -149,10 +152,11 @@ export function TopNavbar({
               <p className="text-[10px] text-[var(--color-text-secondary)] uppercase">
                 {user?.role === "admin" ? "Level 4 Admin" : user?.username || 'Unknown'}
               </p>
-            </div>
+            </button>
             <motion.div 
+              onClick={() => setProfileSettingsOpen(true)}
               className={clsx(
-                "w-7 h-7 rounded-full border overflow-hidden relative",
+                "w-7 h-7 rounded-full border overflow-hidden relative cursor-pointer",
                 user?.role === "admin" 
                   ? "border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.3)]" 
                   : "border-[var(--color-primary)]/30"
@@ -264,6 +268,16 @@ export function TopNavbar({
                   {link.label}
                 </Link>
               ))}
+              {/* Profile Settings for Mobile */}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setProfileSettingsOpen(true);
+                }}
+                className="text-sm uppercase tracking-widest py-3 px-4 text-[var(--color-primary)] border-l-2 border-transparent hover:border-[var(--color-primary)]/50 text-left transition-all"
+              >
+                Node Settings
+              </button>
               {/* Logout for Mobile */}
               {user && (
                 <button

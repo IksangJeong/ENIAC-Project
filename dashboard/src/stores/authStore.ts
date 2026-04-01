@@ -1,13 +1,29 @@
 import { create } from "zustand";
 import { useEffect, useState } from "react";
+import { DepartmentId } from "@/lib/constants";
 
 export interface User {
   id: string;
   username: string;
   name: string;
   email: string;
-  role?: "admin" | "user";
+  role?: "admin" | "member" | "viewer";
   avatar?: string;
+  position?: string;
+  department?: DepartmentId;
+  bio?: string;
+  skills?: string[];
+  statusMessage?: string;
+  metrics?: {
+    todayCommits: number;
+    weeklyActivity: number[];
+  };
+  socialLinks?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+  joinDate?: string;
 }
 
 interface AuthState {
@@ -18,11 +34,14 @@ interface AuthState {
   error: string | null;
   isHydrated: boolean;
   isInitialLoadComplete: boolean;
+  isProfileSettingsOpen: boolean;
 
   setUser: (user: User | null) => void;
+  updateUser: (updates: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setInitialLoadComplete: (complete: boolean) => void;
+  setProfileSettingsOpen: (open: boolean) => void;
   logout: () => void;
   clearError: () => void;
   hydrate: () => void;
@@ -36,6 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
   isHydrated: false,
   isInitialLoadComplete: false,
+  isProfileSettingsOpen: false,
 
   setUser: (user) => {
     set({
@@ -50,11 +70,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  updateUser: (updates) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      const updatedUser = { ...currentUser, ...updates };
+      set({
+        user: updatedUser,
+        isAdmin: updatedUser.role === "admin",
+      });
+      localStorage.setItem("authUser", JSON.stringify(updatedUser));
+    }
+  },
+
   setLoading: (loading) => set({ loading }),
 
   setError: (error) => set({ error }),
 
   setInitialLoadComplete: (complete) => set({ isInitialLoadComplete: complete }),
+
+  setProfileSettingsOpen: (open) => set({ isProfileSettingsOpen: open }),
 
   logout: () => {
     set({
