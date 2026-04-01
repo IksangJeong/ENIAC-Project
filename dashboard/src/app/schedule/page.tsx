@@ -20,17 +20,6 @@ export default function SchedulePage() {
   const [timeLeft, setTimeLeft] = useState({ h: 13, m: 45, s: 22 });
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollPos, setScrollPos] = useState({ top: true, bottom: false });
-
-  // 스크롤 경계 감지 로직
-  const handleScroll = () => {
-    if (!scrollContainerRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-    setScrollPos({
-      top: scrollTop < 10,
-      bottom: scrollTop + clientHeight > scrollHeight - 10
-    });
-  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -79,16 +68,6 @@ export default function SchedulePage() {
       <PageLayout activePage="schedule">
         <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden relative">
           
-          {/* Scroll Boundary Glow Effects */}
-          <div className={clsx(
-            "absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[var(--color-primary)]/10 to-transparent z-20 pointer-events-none transition-opacity duration-500",
-            scrollPos.top ? "opacity-100" : "opacity-0"
-          )} />
-          <div className={clsx(
-            "absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[var(--color-primary)]/10 to-transparent z-20 pointer-events-none transition-opacity duration-500",
-            scrollPos.bottom ? "opacity-100" : "opacity-0"
-          )} />
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full overflow-hidden">
             
             {/* Left Column */}
@@ -138,7 +117,6 @@ export default function SchedulePage() {
               
               <div 
                 ref={scrollContainerRef}
-                onScroll={handleScroll}
                 className="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-8 relative overscroll-contain"
               >
                 {/* Vertical Timeline Line */}
