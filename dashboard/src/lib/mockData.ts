@@ -216,6 +216,7 @@ export const mockSchedules: Schedule[] = [
     location: "Online (Discord)",
     description: "Next.js 14+ 서버 컴포넌트의 동작 원리와 최적화 전략에 대해 알아봅니다.",
     participants: 12,
+    participantIds: ["1", "3", "5"], // 김철수, 박지훈, 강서연
     isOfficial: true,
   },
   {
@@ -228,6 +229,7 @@ export const mockSchedules: Schedule[] = [
     location: "동아리방",
     description: "백준 골드 난이도 동적 계획법 문제 풀이",
     participants: 6,
+    participantIds: ["1", "4", "6"], // 김철수, 정민준, 조현우
   },
   {
     id: "3",
@@ -240,6 +242,7 @@ export const mockSchedules: Schedule[] = [
     location: "IT관 B101호",
     description: "48시간 동안 진행되는 클럽 최대의 개발 축제",
     participants: 40,
+    participantIds: ["1", "2", "3", "4", "5", "6"], // 전원 참여
     isOfficial: true,
   },
   {
@@ -252,6 +255,7 @@ export const mockSchedules: Schedule[] = [
     location: "학교 근처 식당",
     description: "새로 들어온 26기 부원들과의 첫 만남",
     participants: 35,
+    participantIds: ["1", "2", "5"], 
     isOfficial: true,
   },
   {
@@ -264,6 +268,7 @@ export const mockSchedules: Schedule[] = [
     location: "Discord",
     description: "4월 행사 일정 조율 및 예산 보고",
     participants: 5,
+    participantIds: ["1", "5"], // 김철수, 강서연 (리더급)
     isOfficial: true,
   },
   {
@@ -276,6 +281,7 @@ export const mockSchedules: Schedule[] = [
     location: "공학관 201호",
     description: "자바스크립트 개발자를 위한 타입스크립트 기초",
     participants: 20,
+    participantIds: ["3", "4"],
     isOfficial: true,
   },
 ];

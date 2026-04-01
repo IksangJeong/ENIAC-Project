@@ -1,8 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Member } from "@/types";
+import { Member, Schedule } from "@/types";
 import { GlitchText } from "@/components/ui";
+import { mockSchedules } from "@/lib/mockData";
+import Link from "next/link";
 import clsx from "clsx";
 
 interface MemberDetailModalProps {
@@ -22,6 +24,9 @@ export function MemberDetailModal({ member, isOpen, onClose }: MemberDetailModal
 
   const todayCommits = member.metrics?.todayCommits || 0;
   const weeklyActivity = member.metrics?.weeklyActivity || [0, 0, 0, 0, 0, 0, 0];
+
+  // 이 멤버가 참여 중인 일정 필터링
+  const assignedSchedules = mockSchedules.filter(s => s.participantIds?.includes(member.id));
 
   return (
     <AnimatePresence>
@@ -167,6 +172,41 @@ export function MemberDetailModal({ member, isOpen, onClose }: MemberDetailModal
                   </section>
                 </div>
               </div>
+
+              {/* Assigned Processes (Schedules) - New Section */}
+              <section className="mb-10">
+                <h3 className="text-[10px] text-[var(--color-primary)] uppercase tracking-[0.3em] mb-4 font-bold">// Assigned_Processes</h3>
+                <div className="grid grid-cols-1 gap-2">
+                  {assignedSchedules.length > 0 ? (
+                    assignedSchedules.map(schedule => (
+                      <Link 
+                        key={schedule.id}
+                        href={`/schedule/${schedule.id}`}
+                        className="flex items-center justify-between p-3 border border-[var(--color-primary)]/10 bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 hover:border-[var(--color-primary)]/30 transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={clsx(
+                            "w-1.5 h-1.5 rounded-full",
+                            schedule.status === 'active' ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+                          )} />
+                          <div>
+                            <p className="text-[11px] font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">{schedule.title}</p>
+                            <p className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">{schedule.type} // {schedule.location}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[9px] font-mono text-[var(--color-primary)] opacity-60">[{schedule.status.toUpperCase()}]</p>
+                          <p className="text-[8px] text-[var(--color-text-secondary)]">{new Date(schedule.date).toLocaleDateString()}</p>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 border border-dashed border-[var(--color-primary)]/10 rounded text-center">
+                      <p className="text-[10px] text-[var(--color-text-secondary)] uppercase font-mono">No active processes assigned to this node.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
 
               {/* Recent System Activity Log */}
               <section className="mt-8">

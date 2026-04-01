@@ -3,10 +3,15 @@
 import { useParams, useRouter } from "next/navigation";
 import { PageLayout } from "@/components/layout";
 import { ProtectedRoute } from "@/components/auth";
+import { MemberDetailModal } from "@/components/dashboard";
 import { useScheduleStore } from "@/stores/scheduleStore";
-import { motion } from "framer-motion";
+import { useAuthStore } from "@/stores/authStore";
+import { mockMembers } from "@/lib/mockData";
+import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useState, useMemo } from "react";
+import { Member } from "@/types";
 import Link from "next/link";
 import clsx from "clsx";
 
@@ -14,12 +19,51 @@ export default function ScheduleDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { getScheduleById } = useScheduleStore();
+  const { user: currentUser } = useAuthStore();
   const schedule = getScheduleById(params.id as string);
+
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // MembersPage와 동일한 멤버 데이터 병합 로직
+  const allMembers = useMemo(() => {
+    let list = [...mockMembers];
+    if (currentUser) {
+      const existingIndex = list.findIndex(m => m.id === currentUser.id);
+      const githubId = currentUser.socialLinks?.github || currentUser.username;
+      const myNode: Member = {
+        ...currentUser,
+        id: currentUser.id,
+        name: currentUser.name || "Unknown Member",
+        username: currentUser.username || "guest",
+        avatar: currentUser.avatar || "",
+        status: "online",
+        statusMessage: currentUser.statusMessage || "Active in cluster",
+        role: currentUser.role || "member",
+        position: currentUser.position || "Club Member",
+        department: currentUser.department || "Management",
+        bio: currentUser.bio || "No biography available.",
+        skills: currentUser.skills || [],
+        socialLinks: { ...currentUser.socialLinks, github: githubId },
+        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0]
+      } as Member;
+
+      if (existingIndex !== -1) list[existingIndex] = myNode;
+      else list = [myNode, ...list];
+    }
+    return list;
+  }, [currentUser]);
+
+  // 이 일정에 참여 중인 멤버 필터링
+  const participatingNodes = useMemo(() => {
+    if (!schedule?.participantIds) return [];
+    return allMembers.filter(m => schedule.participantIds?.includes(m.id));
+  }, [schedule, allMembers]);
 
   if (!schedule) {
     return (
       <ProtectedRoute>
-        <PageLayout>
+        <PageLayout activePage="schedule">
           <div className="flex flex-col items-center justify-center h-[60vh] font-mono">
             <h1 className="text-red-500 text-2xl mb-4 font-bold">ERROR: DATA_NOT_FOUND</h1>
             <p className="text-gray-500 mb-8 uppercase tracking-widest">Requested record is no longer available in the local node.</p>
@@ -32,10 +76,15 @@ export default function ScheduleDetailPage() {
     );
   }
 
+  const handleMemberClick = (member: Member) => {
+    setSelectedMember(member);
+    setIsModalOpen(true);
+  };
+
   return (
     <ProtectedRoute>
       <PageLayout activePage="schedule">
-        <div className="max-w-4xl mx-auto h-full overflow-y-auto custom-scrollbar pr-2">
+        <div className="max-w-5xl mx-auto h-full overflow-y-auto custom-scrollbar pr-2">
           {/* Header Navigation */}
           <div className="flex items-center gap-4 mb-8 text-[10px] font-mono">
             <Link href="/schedule" className="opacity-50 hover:text-[var(--color-primary)] hover:opacity-100 transition-all">
@@ -45,9 +94,9 @@ export default function ScheduleDetailPage() {
             <span className="text-[var(--color-primary)]">MISSION_DEBRIEFING: {schedule.id}</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
             {/* Left Column: Data Grid */}
-            <div className="md:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-10">
               <header className="space-y-4">
                 <div className="flex items-center gap-3">
                   <span className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
@@ -89,27 +138,73 @@ export default function ScheduleDetailPage() {
                 </div>
               </section>
 
-              {/* Recruitment Progress */}
-              <section className="space-y-4">
-                 <h3 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-[var(--color-primary)]" />
-                    Unit_Engagement_Status
+              {/* Participating Nodes - New Section */}
+              <section className="space-y-6">
+                 <h3 className="text-xs font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-[var(--color-primary)]">
+                    <span className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full animate-pulse" />
+                    Participating_Nodes (Active Clusters)
                  </h3>
-                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <StatusCard label="Current Units" value={schedule.participants || 0} />
-                    <StatusCard label="Mission Capacity" value="40" />
-                    <StatusCard label="Engagement Rate" value={Math.round(((schedule.participants || 0) / 40) * 100) + "%"} />
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {participatingNodes.length > 0 ? (
+                      participatingNodes.map(member => (
+                        <div 
+                          key={member.id}
+                          onClick={() => handleMemberClick(member)}
+                          className="flex items-center gap-4 p-3 border border-[var(--color-primary)]/10 bg-[var(--color-primary)]/5 hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/10 transition-all cursor-pointer group"
+                        >
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-full border border-[var(--color-primary)]/30 overflow-hidden">
+                              {member.avatar ? (
+                                <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary)]/10 text-xs font-bold text-[var(--color-primary)]">
+                                  {member.name[0]}
+                                </div>
+                              )}
+                            </div>
+                            <div className={clsx(
+                              "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[var(--color-bg-black)]",
+                              member.status === 'online' ? "bg-emerald-500" : "bg-slate-500"
+                            )} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-bold text-white group-hover:text-[var(--color-primary)] transition-colors uppercase truncate">
+                              {member.name}
+                            </p>
+                            <p className="text-[9px] text-[var(--color-text-secondary)] font-mono uppercase truncate">
+                              {member.position} // {member.department}
+                            </p>
+                          </div>
+                          <div className="text-[10px] font-mono text-[var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
+                            &gt; INSPECT
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="sm:col-span-2 p-8 border border-dashed border-[var(--color-primary)]/10 rounded text-center">
+                        <p className="text-[10px] text-[var(--color-text-secondary)] font-mono uppercase tracking-widest">No nodes currently engaged in this operation.</p>
+                      </div>
+                    )}
                  </div>
               </section>
             </div>
 
-            {/* Right Column: System Logs */}
+            {/* Right Column: System Logs & Stats */}
             <div className="space-y-6">
+               <section className="space-y-4">
+                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40">Engagement_Metrics</h3>
+                 <div className="grid grid-cols-1 gap-2">
+                    <StatusCard label="Active Nodes" value={participatingNodes.length} />
+                    <StatusCard label="Total Capacity" value="40" />
+                    <StatusCard label="Efficiency" value={Math.round((participatingNodes.length / 10) * 100) + "%"} />
+                 </div>
+               </section>
+
                <div className="border border-[var(--color-primary)]/20 bg-[var(--color-bg-black)]/60 p-4 rounded-sm space-y-4">
                   <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-50">SYSTEM_LOGS</h3>
                   <div className="space-y-2 font-mono text-[9px] text-gray-500">
                      <p className="flex gap-2"><span className="text-[var(--color-primary)]">[OK]</span> NODE_SYNC_COMPLETED</p>
-                     <p className="flex gap-2"><span className="text-[var(--color-primary)]">[OK]</span> DATA_PACKETS_RETRIEVED</p>
+                     <p className="flex gap-2"><span className="text-[var(--color-primary)]">[OK]</span> {participatingNodes.length} DATA_PACKETS_RETRIEVED</p>
                      <p className="flex gap-2"><span className="text-amber-500">[WARN]</span> ENCRYPTION_LAYER_3_EXPIRED</p>
                      <p className="flex gap-2"><span className="text-[var(--color-primary)]">[OK]</span> DEBRIEFING_UI_LOADED</p>
                   </div>
@@ -127,6 +222,13 @@ export default function ScheduleDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Member Modal Integration */}
+        <MemberDetailModal 
+          member={selectedMember}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </PageLayout>
     </ProtectedRoute>
   );
@@ -144,9 +246,9 @@ function DataPoint({ label, value, subValue }: { label: string; value: string; s
 
 function StatusCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="border border-[var(--color-primary)]/10 bg-white/5 p-4 text-center space-y-1">
+    <div className="border border-[var(--color-primary)]/10 bg-white/5 p-4 flex justify-between items-center">
       <span className="text-[8px] font-mono uppercase tracking-widest opacity-40">{label}</span>
-      <p className="text-xl font-bold text-[var(--color-primary)] font-mono">{value}</p>
+      <p className="text-lg font-bold text-[var(--color-primary)] font-mono">{value}</p>
     </div>
   );
 }

@@ -78,6 +78,7 @@ export interface Schedule {
   location?: string;
   description?: string;
   participants?: number;
+  participantIds?: string[]; // New: Linked member IDs
   isOfficial?: boolean;
 }
 
