@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { GlitchText, ConnectionStatus } from "@/components/ui";
 import { useAuthStore } from "@/stores/authStore";
+import { signOut } from "next-auth/react";
 import clsx from "clsx";
 
 interface NavLink {
@@ -42,8 +43,16 @@ export function TopNavbar({
   const currentPage = activePage || navLinks.find(link => link.href === pathname)?.id || "dashboard";
 
   const handleLogout = async () => {
+    // 1. NextAuth 세션 종료 (GitHub 등)
+    await signOut({ redirect: false });
+    
+    // 2. 자체 로그아웃 API 호출
     await fetch('/api/auth/logout', { method: 'POST' });
+    
+    // 3. Zustand 및 LocalStorage 클리어
     logout();
+    
+    // 4. 로그인 페이지로 이동
     router.push('/auth/login');
   };
 
