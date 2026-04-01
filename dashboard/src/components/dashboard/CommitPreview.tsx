@@ -28,7 +28,7 @@ export function CommitPreview({ rankings, delay = 0, className }: CommitPreviewP
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+        <h3 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           Commit Leaders
         </h3>
         <svg className="w-4 h-4 text-[var(--color-primary)]/40" viewBox="0 0 24 24" fill="currentColor">
@@ -51,8 +51,8 @@ export function CommitPreview({ rankings, delay = 0, className }: CommitPreviewP
                 {/* Rank */}
                 <span
                   className={clsx(
-                    "text-[10px] font-mono w-4",
-                    index === 0 ? "text-[var(--color-warning)]" : "text-[var(--color-text-secondary)]/50"
+                    "text-[12px] font-mono w-4",
+                    index === 0 ? "text-[var(--color-warning)]" : "text-[var(--color-text-secondary)]/60"
                   )}
                 >
                   {String(user.rank).padStart(2, "0")}
@@ -61,7 +61,7 @@ export function CommitPreview({ rankings, delay = 0, className }: CommitPreviewP
                 {/* Avatar */}
                 <div
                   className={clsx(
-                    "w-6 h-6 rounded-full border shrink-0 flex items-center justify-center text-[10px]",
+                    "w-6 h-6 rounded-full border shrink-0 flex items-center justify-center text-[11px]",
                     index === 0
                       ? "border-[var(--color-warning)]/50"
                       : "border-[var(--color-primary)]/20 bg-[var(--color-bg-black)]"
@@ -75,20 +75,20 @@ export function CommitPreview({ rankings, delay = 0, className }: CommitPreviewP
                 </div>
 
                 {/* Name */}
-                <span className="text-[11px] font-bold truncate">
+                <span className="text-[12px] font-bold truncate">
                   {user.username.toUpperCase()}
                 </span>
               </div>
 
               {/* Commits */}
-              <span className="font-mono text-[11px] text-[var(--color-primary)]">
+              <span className="font-mono text-[12px] text-[var(--color-primary)]">
                 {user.commits}
               </span>
             </motion.div>
           ))
         ) : (
           <div className="flex items-center justify-center h-full opacity-50">
-            <span className="text-[10px]">NO DATA</span>
+            <span className="text-[11px]">NO DATA</span>
           </div>
         )}
       </div>
@@ -98,7 +98,7 @@ export function CommitPreview({ rankings, delay = 0, className }: CommitPreviewP
         href="/github"
         className={clsx(
           "mt-2 py-1.5 text-center",
-          "text-[9px] uppercase tracking-widest",
+          "text-[11px] uppercase tracking-widest",
           "border border-[var(--color-primary)]/20",
           "hover:bg-[var(--color-primary)] hover:text-[var(--color-bg-black)]",
           "transition-all duration-300"

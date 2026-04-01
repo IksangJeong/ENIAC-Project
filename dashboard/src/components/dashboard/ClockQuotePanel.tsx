@@ -25,7 +25,7 @@ export function ClockQuotePanel({ quote, delay = 0, className }: ClockQuotePanel
       transition={{ duration: 0.4, delay }}
     >
       {/* Header */}
-      <div className="text-[8px] text-[var(--color-text-secondary)]/50 uppercase tracking-widest mb-2">
+      <div className="text-[10px] text-[var(--color-text-secondary)]/60 uppercase tracking-widest mb-2">
         System Time
       </div>
 
@@ -43,22 +43,22 @@ export function ClockQuotePanel({ quote, delay = 0, className }: ClockQuotePanel
 
       {/* Quote */}
       <div className="flex-1 flex flex-col justify-center min-h-0">
-        <div className="text-[8px] text-[var(--color-text-secondary)]/50 uppercase tracking-widest mb-1">
+        <div className="text-[10px] text-[var(--color-text-secondary)]/60 uppercase tracking-widest mb-1">
           Kernel Message
         </div>
         {quote ? (
           <>
-            <p className="text-[11px] italic text-[var(--color-text)]/80 leading-relaxed line-clamp-3">
+            <p className="text-[12px] italic text-[var(--color-text)]/80 leading-relaxed line-clamp-3">
               "{quote.quote}"
             </p>
             {quote.author && (
-              <p className="text-[9px] text-[var(--color-text-secondary)]/60 mt-1">
+              <p className="text-[11px] text-[var(--color-text-secondary)]/70 mt-1">
                 — {quote.author}
               </p>
             )}
           </>
         ) : (
-          <p className="text-[11px] opacity-50">Loading...</p>
+          <p className="text-[12px] opacity-50">Loading...</p>
         )}
       </div>
     </motion.div>

@@ -34,7 +34,7 @@ export function AlgorithmSummary({ challenges, delay = 0, className }: Algorithm
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+        <h3 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           Algorithm
         </h3>
         <svg className="w-4 h-4 text-[var(--color-primary)]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,7 +58,7 @@ export function AlgorithmSummary({ challenges, delay = 0, className }: Algorithm
               <p className="text-sm font-mono font-bold text-[var(--color-primary)]">
                 {totalSolved || 852}
               </p>
-              <p className="text-[7px] text-[var(--color-text-secondary)] uppercase">
+              <p className="text-[9px] text-[var(--color-text-secondary)] uppercase">
                 Solved
               </p>
             </div>
@@ -68,12 +68,12 @@ export function AlgorithmSummary({ challenges, delay = 0, className }: Algorithm
         {/* Stats */}
         <div className="flex-1 space-y-1.5">
           <div className="flex justify-between items-center">
-            <span className="text-[8px] text-[var(--color-text-secondary)]">STREAK</span>
-            <span className="text-[10px] font-mono text-[var(--color-primary)]">{weeklyStreak}D</span>
+            <span className="text-[10px] text-[var(--color-text-secondary)]">STREAK</span>
+            <span className="text-[12px] font-mono text-[var(--color-primary)]">{weeklyStreak}D</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-[8px] text-[var(--color-text-secondary)]">SUCCESS</span>
-            <span className="text-[10px] font-mono text-[var(--color-primary)]">{successRate}%</span>
+            <span className="text-[10px] text-[var(--color-text-secondary)]">SUCCESS</span>
+            <span className="text-[12px] font-mono text-[var(--color-primary)]">{successRate}%</span>
           </div>
           {hasActiveChallenge && (
             <div className="flex items-center gap-1">
@@ -82,7 +82,7 @@ export function AlgorithmSummary({ challenges, delay = 0, className }: Algorithm
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 0.5, repeat: Infinity }}
               />
-              <span className="text-[8px] uppercase text-[var(--color-error)]">
+              <span className="text-[10px] uppercase text-[var(--color-error)]">
                 Active
               </span>
             </div>
@@ -95,7 +95,7 @@ export function AlgorithmSummary({ challenges, delay = 0, className }: Algorithm
         href="/algorithm"
         className={clsx(
           "mt-2 py-1.5 text-center",
-          "text-[9px] uppercase tracking-widest",
+          "text-[11px] uppercase tracking-widest",
           "border border-[var(--color-primary)]/20",
           "hover:bg-[var(--color-primary)] hover:text-[var(--color-bg-black)]",
           "transition-all duration-300"

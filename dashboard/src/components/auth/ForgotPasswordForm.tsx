@@ -43,22 +43,22 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Email Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; EMAIL ADDRESS
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="email"
             value={email}
             onChange={handleChange}
             placeholder="you@example.com"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
-          <div className="absolute inset-0 pointer-events-none border border-cyan-500/50 opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-0 pointer-events-none border border-[var(--color-primary)]/50 opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function ForgotPasswordForm() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-2 rounded text-sm font-mono"
+          className="bg-[var(--color-error)]/20 border border-[var(--color-error)]/50 text-[var(--color-error)] px-4 py-2 rounded text-base font-mono"
         >
           ✗ {error}
         </motion.div>
@@ -78,7 +78,7 @@ export function ForgotPasswordForm() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-2 rounded text-sm font-mono"
+          className="bg-[var(--color-success)]/20 border border-[var(--color-success)]/50 text-[var(--color-success)] px-4 py-2 rounded text-base font-mono"
         >
           ✓ {success}
         </motion.div>
@@ -90,7 +90,7 @@ export function ForgotPasswordForm() {
         whileTap={{ scale: 0.98 }}
         type="submit"
         disabled={loading}
-        className="w-full mt-6 bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-bold py-3 rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-cyan-500/50"
+        className="w-full mt-6 bg-[var(--color-primary)] text-[var(--color-bg-black)] font-bold py-3 text-base rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[var(--color-accent-glow)]"
       >
         {loading ? "SENDING..." : "SEND RESET LINK"}
       </motion.button>

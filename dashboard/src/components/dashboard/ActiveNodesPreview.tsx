@@ -36,10 +36,10 @@ export function ActiveNodesPreview({ users, delay = 0, className }: ActiveNodesP
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+        <h3 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           Active Nodes
         </h3>
-        <span className="text-[9px] font-mono bg-[var(--color-primary)] text-[var(--color-bg-black)] px-1.5 py-0.5">
+        <span className="text-[11px] font-mono bg-[var(--color-primary)] text-[var(--color-bg-black)] px-1.5 py-0.5">
           {onlineUsers.length} ONLINE
         </span>
       </div>
@@ -59,7 +59,7 @@ export function ActiveNodesPreview({ users, delay = 0, className }: ActiveNodesP
           >
             {/* Avatar with Status */}
             <div className="relative shrink-0">
-              <div className="w-7 h-7 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-bg-black)] flex items-center justify-center text-[10px]">
+              <div className="w-7 h-7 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-bg-black)] flex items-center justify-center text-[11px]">
                 {user.avatar ? (
                   <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full" />
                 ) : (
@@ -78,8 +78,8 @@ export function ActiveNodesPreview({ users, delay = 0, className }: ActiveNodesP
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-bold truncate">{user.name}</p>
-              <p className="text-[8px] text-[var(--color-text-secondary)] truncate">
+              <p className="text-[12px] font-bold truncate">{user.name}</p>
+              <p className="text-[10px] text-[var(--color-text-secondary)] truncate">
                 {user.status === "online"
                   ? mockActivities[index % mockActivities.length]
                   : "Offline"}
@@ -94,7 +94,7 @@ export function ActiveNodesPreview({ users, delay = 0, className }: ActiveNodesP
         href="/members"
         className={clsx(
           "mt-2 py-1.5 text-center",
-          "text-[9px] uppercase tracking-widest",
+          "text-[11px] uppercase tracking-widest",
           "border border-[var(--color-primary)]/20",
           "hover:bg-[var(--color-primary)] hover:text-[var(--color-bg-black)]",
           "transition-all duration-300"
