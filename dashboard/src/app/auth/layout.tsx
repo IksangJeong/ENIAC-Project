@@ -91,13 +91,25 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       {/* 3. MAIN CONTENT LAYER */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 md:p-6 lg:p-10">
         
+        {/* MOBILE HEADER: Only visible when left panel is hidden */}
+        <div className="lg:hidden w-full max-w-sm mb-8 flex items-center justify-between opacity-60">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 border border-[var(--color-primary)] flex items-center justify-center text-sm font-black">E</div>
+            <span className="text-[10px] font-bold tracking-[0.3em] uppercase">ENIAC_STATION</span>
+          </div>
+          <div className="flex items-center gap-2 text-[8px]">
+            <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+            SECURE_LINK
+          </div>
+        </div>
+
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-5xl min-h-[600px] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row overflow-hidden rounded-sm"
+          className="w-full max-w-5xl min-h-[500px] lg:min-h-[600px] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden rounded-sm"
         >
-          {/* LEFT: Branding & Fixed Waveform Layout */}
-          <div className="flex-1 p-8 lg:p-12 border-b md:border-b-0 md:border-r border-[var(--color-primary)]/10 bg-black/20 flex flex-col relative overflow-hidden">
+          {/* LEFT: Branding & Diagnostic (Hidden on Mobile/Tablet) */}
+          <div className="hidden lg:flex flex-1 p-8 lg:p-12 border-r border-[var(--color-primary)]/10 bg-black/20 flex-col relative overflow-hidden">
             
             {/* [TOP] Static Branding */}
             <div className="space-y-2 relative z-10">
@@ -106,7 +118,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <p className="text-[10px] text-[var(--color-primary)]/50 tracking-[0.3em] uppercase font-bold">Secure Access Terminal</p>
             </div>
 
-            {/* [CENTER] Diagnostic Terminal (Shifted Upwards) */}
+            {/* [CENTER] Diagnostic Terminal */}
             <div className="flex-1 flex flex-col justify-start relative mt-16">
               <div className="absolute inset-0 opacity-[0.05] overflow-hidden pointer-events-none space-y-1">
                 {Array(20).fill(0).map((_, i) => (
@@ -136,7 +148,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            {/* [FIXED ANCHOR] Waveform Visualization - Positioned at bottom of left panel */}
+            {/* [FIXED ANCHOR] Waveform Visualization */}
             <div className="absolute bottom-24 left-0 right-0 px-8 lg:px-12 pointer-events-none">
               <div className="flex items-end gap-1 h-8 opacity-40">
                 {Array(48).fill(0).map((_, i) => (
@@ -168,8 +180,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* RIGHT: Form Content */}
-          <div className="flex-1 p-8 lg:p-12 bg-black/40 flex flex-col justify-center relative z-10">
+          {/* RIGHT: Form Content (Full width on Mobile) */}
+          <div className="flex-1 p-8 md:p-12 lg:p-16 bg-black/40 flex flex-col justify-center relative z-10">
             {children}
           </div>
         </motion.div>
@@ -187,7 +199,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="flex gap-4 opacity-40">
             <span>CPU: 12%</span>
             <span>MEM: 4.2GB</span>
-            <span>LINK: 1GBPS</span>
           </div>
         </div>
         <div className="hidden sm:block opacity-40 uppercase tracking-widest font-bold">
