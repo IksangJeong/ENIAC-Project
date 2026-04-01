@@ -90,7 +90,7 @@ export function LoginForm() {
           <div className="space-y-1">
             <div className="flex justify-between items-center px-0.5">
               <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[02] CRYPT_KEY</label>
-              <Link href="/auth/forgot-password" size-1 className="text-[8px] text-[var(--color-primary)]/40 hover:text-[var(--color-primary)] transition-colors underline">LOST_KEY?</Link>
+              <Link href="/auth/forgot-password" className="text-[8px] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors underline underline-offset-2 opacity-60 hover:opacity-100 font-mono">LOST_KEY?</Link>
             </div>
             <input
               type="password"

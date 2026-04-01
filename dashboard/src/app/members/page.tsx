@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -10,7 +10,7 @@ import { DEPARTMENTS } from "@/lib/constants";
 import { Member } from "@/types";
 import clsx from "clsx";
 
-export default function MembersPage() {
+function MembersPageContent() {
   const searchParams = useSearchParams();
   const targetMemberId = searchParams.get("id");
   const { getAllMembers } = useAuthStore();
@@ -96,5 +96,21 @@ export default function MembersPage() {
 
       <MemberDetailModal member={selectedMember} isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setSelectedMember(null); }} />
     </PageLayout>
+  );
+}
+
+export default function MembersPage() {
+  return (
+    <Suspense fallback={
+      <PageLayout activePage="members">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+            // SCANNING_MEMBER_DATABASE...
+          </div>
+        </div>
+      </PageLayout>
+    }>
+      <MembersPageContent />
+    </Suspense>
   );
 }

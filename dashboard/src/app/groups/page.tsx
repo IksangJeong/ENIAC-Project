@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -10,7 +10,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { Group } from "@/types";
 import clsx from "clsx";
 
-export default function GroupsPage() {
+function GroupsPageContent() {
   const { groups } = useGroupStore();
   const { user } = useAuthStore();
   const searchParams = useSearchParams();
@@ -135,5 +135,21 @@ export default function GroupsPage() {
       <GroupDetailModal group={selectedGroup} isOpen={isDetailModalOpen} onClose={() => { setIsDetailModalOpen(false); setSelectedGroup(null); }} />
       <GroupCreateModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
+  );
+}
+
+export default function GroupsPage() {
+  return (
+    <Suspense fallback={
+      <PageLayout activePage="groups">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+            // INITIALIZING_CLUSTER_INTERFACE...
+          </div>
+        </div>
+      </PageLayout>
+    }>
+      <GroupsPageContent />
+    </Suspense>
   );
 }

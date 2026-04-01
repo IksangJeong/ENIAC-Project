@@ -66,7 +66,7 @@ export function MemberCard({ member, onClick }: MemberCardProps) {
               </h3>
               <div className="flex flex-col items-end">
                 <span className="text-[9px] font-mono tracking-widest text-[var(--color-text-secondary)] opacity-60">
-                  [{member.role.toUpperCase()}]
+                  [{(member.role || "member").toUpperCase()}]
                 </span>
                 {todayCommits > 0 && (
                   <span className="text-[8px] font-mono text-emerald-400 mt-0.5 animate-bounce">

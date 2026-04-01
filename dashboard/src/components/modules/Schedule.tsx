@@ -74,6 +74,11 @@ function ScheduleItem({ schedule, delay }: ScheduleItemProps) {
       label: "STUDY",
       icon: "📚",
     },
+    meeting: {
+      color: "var(--color-info)",
+      label: "MEETING",
+      icon: "🤝",
+    },
   };
 
   const config = typeConfig[schedule.type];

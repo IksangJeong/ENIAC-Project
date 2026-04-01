@@ -106,10 +106,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-5xl min-h-[500px] lg:min-h-[600px] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden rounded-sm"
+          className="w-full max-w-6xl min-h-[500px] lg:min-h-[600px] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden rounded-sm"
         >
           {/* LEFT: Branding & Diagnostic (Hidden on Mobile/Tablet) */}
-          <div className="hidden lg:flex flex-1 p-8 lg:p-12 border-r border-[var(--color-primary)]/10 bg-black/20 flex-col relative overflow-hidden">
+          <div className="hidden lg:flex flex-[0.8] p-8 lg:p-12 border-r border-[var(--color-primary)]/10 bg-black/20 flex-col relative overflow-hidden">
             
             {/* [TOP] Static Branding */}
             <div className="space-y-2 relative z-10">
@@ -181,7 +181,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           </div>
 
           {/* RIGHT: Form Content (Full width on Mobile) */}
-          <div className="flex-1 p-8 md:p-12 lg:p-16 bg-black/40 flex flex-col justify-center relative z-10">
+          <div className="flex-[1.2] p-8 md:p-12 lg:p-16 bg-black/40 flex flex-col justify-center relative z-10">
             {children}
           </div>
         </motion.div>

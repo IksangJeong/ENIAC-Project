@@ -99,6 +99,7 @@ export interface Schedule {
   description?: string;
   participants?: number;
   participantIds?: string[]; // New: Linked member IDs
+  groupId?: string; // New: Linked group ID (optional)
   isOfficial?: boolean;
 }
 

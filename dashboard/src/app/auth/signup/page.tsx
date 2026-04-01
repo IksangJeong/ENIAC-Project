@@ -10,7 +10,7 @@ export default function SignupPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-md"
+      className="w-full max-w-xl mx-auto"
     >
       <div className="border border-[var(--color-primary)]/30 bg-[var(--color-bg-black)]/80 backdrop-blur-sm p-8 rounded-lg shadow-2xl relative">
         {/* Corner decorations */}
