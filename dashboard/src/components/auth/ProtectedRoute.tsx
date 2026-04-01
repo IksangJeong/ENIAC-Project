@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore, useAuthHydrate } from "@/stores/authStore";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -13,16 +14,20 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
   const isHydrated = useAuthHydrate();
+  const { status } = useSession();
 
   useEffect(() => {
-    // hydrate가 완료된 후 인증 확인
-    if (isHydrated && !isAuthenticated) {
+    // NextAuth 세션 로딩 중이거나 Zustand가 복구되는 중이면 대기
+    if (status === "loading" || !isHydrated) return;
+
+    // NextAuth 세션이 없고 Zustand로도 인증되지 않은 경우에만 로그인 페이지로 리다이렉트
+    if (status === "unauthenticated" && !isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [isHydrated, isAuthenticated, router]);
+  }, [isHydrated, isAuthenticated, status, router]);
 
-  // hydrate 대기 중
-  if (!isHydrated) {
+  // 로딩 상태 표시
+  if (!isHydrated || status === "loading") {
     return (
       <div className="h-screen w-full bg-black flex items-center justify-center">
         <motion.div
@@ -36,8 +41,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // 인증되지 않음 (리다이렉트 중)
-  if (!isAuthenticated) {
+  // 인증되지 않음 (이미 리다이렉트 로직이 실행 중임)
+  if (status === "unauthenticated" && !isAuthenticated) {
     return null;
   }
 

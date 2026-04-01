@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Share_Tech_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 const shareTechMono = Share_Tech_Mono({
   weight: "400",
@@ -32,7 +33,7 @@ export default function RootLayout({
         className={`${shareTechMono.variable} ${orbitron.variable} antialiased`}
         style={{ fontFamily: "var(--font-share-tech), monospace" }}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

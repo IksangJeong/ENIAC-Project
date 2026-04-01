@@ -6,11 +6,14 @@ export interface User {
   username: string;
   name: string;
   email: string;
+  role?: "admin" | "user";
+  avatar?: string;
 }
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   loading: boolean;
   error: string | null;
   isHydrated: boolean;
@@ -26,6 +29,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isAuthenticated: false,
+  isAdmin: false,
   loading: false,
   error: null,
   isHydrated: false,
@@ -34,6 +38,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({
       user,
       isAuthenticated: !!user,
+      isAdmin: user?.role === "admin",
       error: null,
     });
     // localStorage에 저장
@@ -50,6 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({
       user: null,
       isAuthenticated: false,
+      isAdmin: false,
       error: null,
     });
     // localStorage에서 삭제
@@ -67,6 +73,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({
           user,
           isAuthenticated: true,
+          isAdmin: user?.role === "admin",
           isHydrated: true,
         });
       } else {

@@ -8,6 +8,15 @@ const mockUsers: any[] = [
     name: "Admin User",
     email: "admin@example.com",
     password: "admin123",
+    role: "admin",
+  },
+  {
+    id: "4",
+    username: "user",
+    name: "Regular User",
+    email: "user@example.com",
+    password: "user123",
+    role: "user",
   },
 ];
 
@@ -35,11 +44,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production:
-    // - Generate JWT token
-    // - Set HttpOnly cookie
-    // - Return user data
-
     return NextResponse.json(
       {
         message: "Login successful",
@@ -48,6 +52,7 @@ export async function POST(request: NextRequest) {
           username: user.username,
           name: user.name,
           email: user.email,
+          role: user.role,
         },
       },
       { status: 200 }
