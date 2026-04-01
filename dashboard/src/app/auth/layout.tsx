@@ -106,10 +106,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-6xl min-h-[500px] lg:min-h-[600px] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden rounded-sm"
+          className="w-full max-w-6xl h-[700px] max-h-[90vh] bg-black/40 backdrop-blur-2xl border border-[var(--color-primary)]/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row overflow-hidden rounded-sm"
         >
           {/* LEFT: Branding & Diagnostic (Hidden on Mobile/Tablet) */}
-          <div className="hidden lg:flex flex-[0.8] p-8 lg:p-12 border-r border-[var(--color-primary)]/10 bg-black/20 flex-col relative overflow-hidden">
+          <div className="hidden lg:flex flex-[0.8] p-8 lg:p-12 border-r border-[var(--color-primary)]/10 bg-black/20 flex-col relative overflow-hidden shrink-0">
             
             {/* [TOP] Static Branding */}
             <div className="space-y-2 relative z-10">
@@ -171,18 +171,17 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                   <p className="text-[8px] opacity-40 uppercase tracking-widest">Node_Cluster_Status</p>
                   <p className="text-[10px] font-bold">STABLE // SYNC_ACTIVE</p>
                 </div>
-                <div className="flex gap-2">
-                  {['DB', 'AUTH', 'SSL'].map(tag => (
-                    <span key={tag} className="text-[7px] border border-[var(--color-primary)]/30 px-1 py-0.5 opacity-60 font-mono italic">{tag}</span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Form Content (Full width on Mobile) */}
-          <div className="flex-[1.2] p-8 md:p-12 lg:p-16 bg-black/40 flex flex-col justify-center relative z-10">
-            {children}
+          {/* RIGHT: Form Content (Fixed and Scrollable) */}
+          <div className="flex-[1.2] bg-black/40 flex flex-col relative z-10 overflow-hidden">
+            <div className="w-full h-full p-6 md:p-10 lg:p-14 overflow-y-auto custom-scrollbar flex items-center justify-center">
+              <div className="w-full py-6">
+                {children}
+              </div>
+            </div>
           </div>
         </motion.div>
 

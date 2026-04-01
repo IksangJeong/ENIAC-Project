@@ -7,10 +7,10 @@ import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 export default function ForgotPasswordPage() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 0.9 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-lg mx-auto"
+      className="w-full max-w-lg mx-auto origin-center"
     >
       <div className="border border-[var(--color-primary)]/30 bg-[var(--color-bg-black)]/80 backdrop-blur-sm p-8 rounded-lg shadow-2xl relative">
         {/* Corner decorations */}
