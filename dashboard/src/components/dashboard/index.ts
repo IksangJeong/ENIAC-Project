@@ -7,3 +7,6 @@ export { EventPreview } from "./EventPreview";
 export { MemberCard } from "./MemberCard";
 export { MemberDetailModal } from "./MemberDetailModal";
 export { ProfileSettingsModal } from "./ProfileSettingsModal";
+export { GroupCard } from "./GroupCard";
+export { GroupDetailModal } from "./GroupDetailModal";
+export { GroupCreateModal } from "./GroupCreateModal";

@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { useEffect, useState } from "react";
 import { DepartmentId } from "@/lib/constants";
+import { mockMembers } from "@/lib/mockData";
+import { Member } from "@/types";
 
 export interface User {
   id: string;
@@ -36,6 +38,7 @@ interface AuthState {
   isInitialLoadComplete: boolean;
   isProfileSettingsOpen: boolean;
 
+  // Actions
   setUser: (user: User | null) => void;
   updateUser: (updates: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
@@ -45,6 +48,9 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
   hydrate: () => void;
+  
+  // Selectors (Derived state)
+  getAllMembers: () => Member[];
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -64,10 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       isAdmin: user?.role === "admin",
       error: null,
     });
-    // localStorage에 저장
-    if (user) {
-      localStorage.setItem("authUser", JSON.stringify(user));
-    }
+    if (user) localStorage.setItem("authUser", JSON.stringify(user));
   },
 
   updateUser: (updates) => {
@@ -82,28 +85,42 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  // 시스템 전체에서 본인 노드가 포함된 멤버 리스트를 가져오는 단일 창구
+  getAllMembers: () => {
+    const currentUser = get().user;
+    let list = [...mockMembers];
+    
+    if (currentUser) {
+      const existingIndex = list.findIndex(m => m.id === currentUser.id);
+      const myNode: Member = {
+        ...currentUser,
+        id: currentUser.id,
+        name: currentUser.name || "Unknown Member",
+        status: "online",
+        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0]
+      } as Member;
+
+      if (existingIndex !== -1) {
+        list[existingIndex] = { ...list[existingIndex], ...myNode };
+      } else {
+        list = [myNode, ...list];
+      }
+    }
+    return list;
+  },
+
   setLoading: (loading) => set({ loading }),
-
   setError: (error) => set({ error }),
-
   setInitialLoadComplete: (complete) => set({ isInitialLoadComplete: complete }),
-
   setProfileSettingsOpen: (open) => set({ isProfileSettingsOpen: open }),
 
   logout: () => {
-    set({
-      user: null,
-      isAuthenticated: false,
-      isAdmin: false,
-      error: null,
-    });
-    // localStorage에서 삭제
+    set({ user: null, isAuthenticated: false, isAdmin: false, error: null });
     localStorage.removeItem("authUser");
   },
 
   clearError: () => set({ error: null }),
 
-  // 페이지 새로고침 시 localStorage에서 복구
   hydrate: () => {
     try {
       const storedUser = localStorage.getItem("authUser");
@@ -125,7 +142,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 }));
 
-// Custom Hook: 클라이언트 사이드에서 hydrate를 자동으로 실행
 export function useAuthHydrate() {
   const [isMounted, setIsMounted] = useState(false);
   const { hydrate, isHydrated } = useAuthStore();

@@ -49,6 +49,26 @@ export interface Member extends User {
   joinDate: string;
 }
 
+// Group Types (New: Study/Project Clusters)
+export type GroupType = "study" | "project";
+export type GroupStatus = "booting" | "processing" | "stabilized" | "halted";
+
+export interface Group {
+  id: string;
+  name: string;
+  type: GroupType;
+  status: GroupStatus;
+  description: string;
+  goal?: string;
+  progress: number; // 0 to 100
+  leaderId: string; // Member.id
+  memberIds: string[]; // Member.ids
+  techStack: string[];
+  repoUrl?: string;
+  docUrl?: string;
+  createdAt: string;
+}
+
 // Crowd Level
 export type CrowdLevel = "low" | "medium" | "high";
 

@@ -13,7 +13,7 @@ export function MemberCard({ member, onClick }: MemberCardProps) {
   const isOnline = member.status === "online";
   const isAway = member.status === "away";
 
-  const skillsText = member.skills.join(", ");
+  const skillsText = member.skills?.join(", ") || "NONE";
   const todayCommits = member.metrics?.todayCommits || 0;
   
   // 커밋 수에 따른 게이지 색상 및 길이 (최대 15개 기준)
