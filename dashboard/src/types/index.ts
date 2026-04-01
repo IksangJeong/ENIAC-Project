@@ -37,17 +37,22 @@ export interface CommitRanking {
 }
 
 // Schedule Types
-export type ScheduleType = "event" | "seminar" | "study";
+export type ScheduleType = "event" | "seminar" | "study" | "meeting";
+export type ScheduleStatus = "upcoming" | "active" | "completed" | "archived";
+export type SchedulePriority = "normal" | "high" | "critical";
 
 export interface Schedule {
   id: string;
   title: string;
   type: ScheduleType;
+  status: ScheduleStatus;
+  priority: SchedulePriority;
   date: string;
   endDate?: string;
   location?: string;
   description?: string;
   participants?: number;
+  isOfficial?: boolean;
 }
 
 // Quote Types

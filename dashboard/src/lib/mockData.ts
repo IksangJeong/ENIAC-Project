@@ -80,39 +80,80 @@ export const mockCommitRankings: CommitRanking[] = [
   },
 ];
 
-// Mock Schedules
+// Mock Schedules - 반드시 Schedule 타입을 명시적으로 지정
 export const mockSchedules: Schedule[] = [
   {
     id: "1",
-    title: "Spring Boot 스터디",
-    type: "study",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // Tomorrow
-    location: "동아리방",
-    participants: 8,
+    title: "React 심화: Server Components",
+    type: "seminar",
+    status: "active",
+    priority: "high",
+    date: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    endDate: new Date(Date.now() + 1000 * 60 * 90).toISOString(),
+    location: "Online (Discord)",
+    description: "Next.js 14+ 서버 컴포넌트의 동작 원리와 최적화 전략에 대해 알아봅니다.",
+    participants: 12,
+    isOfficial: true,
   },
   {
     id: "2",
-    title: "알고리즘 세미나: 그래프 탐색",
-    type: "seminar",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days
-    location: "공학관 302호",
-    participants: 15,
+    title: "알고리즘 스터디 (A팀)",
+    type: "study",
+    status: "upcoming",
+    priority: "normal",
+    date: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+    location: "동아리방",
+    description: "백준 골드 난이도 동적 계획법 문제 풀이",
+    participants: 6,
   },
   {
     id: "3",
-    title: "ENIAC 정기 모임",
+    title: "ENIAC 봄 해커톤 2026",
     type: "event",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(), // 1 week
-    location: "학생회관 세미나실",
-    participants: 25,
+    status: "upcoming",
+    priority: "critical",
+    date: new Date("2026-04-15T10:00:00").toISOString(),
+    endDate: new Date("2026-04-17T18:00:00").toISOString(),
+    location: "IT관 B101호",
+    description: "48시간 동안 진행되는 클럽 최대의 개발 축제",
+    participants: 40,
+    isOfficial: true,
   },
   {
     id: "4",
-    title: "React 심화 스터디",
-    type: "study",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10).toISOString(),
-    location: "동아리방",
-    participants: 6,
+    title: "신입 부원 환영회",
+    type: "event",
+    status: "completed",
+    priority: "normal",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+    location: "학교 근처 식당",
+    description: "새로 들어온 26기 부원들과의 첫 만남",
+    participants: 35,
+    isOfficial: true,
+  },
+  {
+    id: "5",
+    title: "정기 운영진 회의",
+    type: "meeting",
+    status: "upcoming",
+    priority: "high",
+    date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+    location: "Discord",
+    description: "4월 행사 일정 조율 및 예산 보고",
+    participants: 5,
+    isOfficial: true,
+  },
+  {
+    id: "6",
+    title: "Typescript 입문 세미나",
+    type: "seminar",
+    status: "completed",
+    priority: "normal",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
+    location: "공학관 201호",
+    description: "자바스크립트 개발자를 위한 타입스크립트 기초",
+    participants: 20,
+    isOfficial: true,
   },
 ];
 
@@ -131,7 +172,7 @@ export const mockChallenges: AlgorithmChallenge[] = [
     problemTitle: "이진 탐색 트리 순회",
     difficulty: "medium",
     status: "in_progress",
-    startTime: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // Started 30 min ago
+    startTime: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
     participants: [
       { userId: "1", username: "김철수", avatar: "", solved: true, solveTime: 1200 },
       { userId: "2", username: "이영희", avatar: "", solved: true, solveTime: 1450 },
@@ -161,35 +202,18 @@ export const mockAnnouncements: Announcement[] = [
     priority: "urgent",
     author: "서버팀",
   },
-  {
-    id: "3",
-    title: "신규 프로젝트 팀원 모집 중",
-    content: "새로운 프로젝트 팀원을 모집합니다.",
-    createdAt: new Date().toISOString(),
-    priority: "normal",
-    author: "프로젝트팀",
-  },
-  {
-    id: "4",
-    title: "알고리즘 스터디 신청 마감 임박",
-    content: "알고리즘 스터디 신청이 곧 마감됩니다.",
-    createdAt: new Date().toISOString(),
-    priority: "normal",
-    author: "스터디팀",
-  },
 ];
 
-// Function to simulate real-time data changes
 export function getRandomServerStatus(): ServerStatus {
   return {
-    cpu: Math.random() * 60 + 20, // 20-80%
+    cpu: Math.random() * 60 + 20,
     ram: {
-      used: Math.floor(Math.random() * 4096) + 6144, // 6-10 GB
+      used: Math.floor(Math.random() * 4096) + 6144,
       total: 16384,
-      percentage: Math.random() * 30 + 40, // 40-70%
+      percentage: Math.random() * 30 + 40,
     },
     uptime: mockServerStatus.uptime + Math.floor(Date.now() / 1000),
-    temperature: Math.floor(Math.random() * 15) + 45, // 45-60°C
+    temperature: Math.floor(Math.random() * 15) + 45,
   };
 }
 
