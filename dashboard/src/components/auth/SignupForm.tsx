@@ -72,20 +72,20 @@ export function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Username Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; USERNAME
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
             placeholder="admin_user"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
         </div>
@@ -93,17 +93,17 @@ export function SignupForm() {
 
       {/* Name Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; FULL NAME
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="John Doe"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
         </div>
@@ -111,17 +111,17 @@ export function SignupForm() {
 
       {/* Email Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; EMAIL ADDRESS
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="you@example.com"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
         </div>
@@ -129,17 +129,17 @@ export function SignupForm() {
 
       {/* Password Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; PASSWORD
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="••••••••"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
         </div>
@@ -147,17 +147,17 @@ export function SignupForm() {
 
       {/* Confirm Password Input */}
       <div className="space-y-2">
-        <label className="text-cyan-400 text-sm font-mono">
+        <label className="text-[var(--color-primary)] text-base font-mono">
           &gt; CONFIRM PASSWORD
         </label>
-        <div className="relative border border-cyan-500/30 rounded overflow-hidden">
+        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
           <input
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="••••••••"
-            className="w-full bg-black/50 px-4 py-3 text-cyan-400 placeholder-cyan-500/30 focus:outline-none focus:border-cyan-400 transition-colors"
+            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
             required
           />
         </div>
@@ -168,7 +168,7 @@ export function SignupForm() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-2 rounded text-sm font-mono"
+          className="bg-[var(--color-error)]/20 border border-[var(--color-error)]/50 text-[var(--color-error)] px-4 py-2 rounded text-base font-mono"
         >
           ✗ {error}
         </motion.div>
@@ -180,7 +180,7 @@ export function SignupForm() {
         whileTap={{ scale: 0.98 }}
         type="submit"
         disabled={loading}
-        className="w-full mt-6 bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-bold py-3 rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-cyan-500/50"
+        className="w-full mt-6 bg-[var(--color-primary)] text-[var(--color-bg-black)] font-bold py-3 text-base rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[var(--color-accent-glow)]"
       >
         {loading ? "REGISTERING..." : "CREATE ACCOUNT"}
       </motion.button>

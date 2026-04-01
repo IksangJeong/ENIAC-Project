@@ -45,7 +45,7 @@ function StatCard({ stat, delay }: StatCardProps) {
     <motion.div
       className={clsx(
         "border border-[var(--color-primary)]/10 bg-[var(--color-bg-dark)]",
-        "p-2.5 rounded-sm panel-corners",
+        "p-3 rounded-sm panel-corners",
         "hover:border-[var(--color-primary)]/30 transition-colors"
       )}
       initial={{ opacity: 0, scale: 0.95 }}
@@ -54,7 +54,7 @@ function StatCard({ stat, delay }: StatCardProps) {
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-[8px] text-[var(--color-text-secondary)]/60 uppercase tracking-widest">
+        <span className="text-[10px] text-[var(--color-text-secondary)]/70 uppercase tracking-widest">
           {stat.label}
         </span>
         <span className="text-[var(--color-primary)]/30">{stat.icon}</span>
@@ -66,7 +66,7 @@ function StatCard({ stat, delay }: StatCardProps) {
           {stat.value}
         </span>
         {stat.subValue && (
-          <span className="text-[10px] text-[var(--color-text-secondary)]/50 ml-0.5">
+          <span className="text-[11px] text-[var(--color-text-secondary)]/60 ml-0.5">
             {stat.subValue}
           </span>
         )}

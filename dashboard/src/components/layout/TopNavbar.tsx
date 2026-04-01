@@ -93,7 +93,7 @@ export function TopNavbar({
               key={link.id}
               href={link.href}
               className={clsx(
-                "text-[10px] xl:text-xs uppercase tracking-widest transition-all duration-300",
+                "text-[11px] xl:text-sm uppercase tracking-widest transition-all duration-300",
                 "hover:text-[var(--color-primary)] hover:glow",
                 currentPage === link.id
                   ? "text-[var(--color-primary)] border-b border-[var(--color-primary)] pb-1 glow"
@@ -113,16 +113,16 @@ export function TopNavbar({
           {/* User Info (Desktop) */}
           <div className="hidden md:flex items-center gap-2 pl-3 lg:pl-5 border-l border-[var(--color-primary)]/20">
             <div className="text-right">
-              <p className="text-[9px] font-bold uppercase tracking-tight">
+              <p className="text-[11px] font-bold uppercase tracking-tight">
                 {user?.name || 'Guest'}
               </p>
-              <p className="text-[7px] text-[var(--color-text-secondary)] uppercase">
+              <p className="text-[10px] text-[var(--color-text-secondary)] uppercase">
                 {user?.username || 'Unknown'}
               </p>
             </div>
             <div className="w-7 h-7 rounded-full border border-[var(--color-primary)]/30 overflow-hidden">
               <div className="w-full h-full bg-[var(--color-primary)]/20 flex items-center justify-center">
-                <span className="text-[10px]">{user?.name?.[0] || 'U'}</span>
+                <span className="text-[11px]">{user?.name?.[0] || 'U'}</span>
               </div>
             </div>
             {/* Logout Button */}

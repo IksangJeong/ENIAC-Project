@@ -31,7 +31,7 @@ export function EventPreview({ schedules, delay = 0, className }: EventPreviewPr
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
+        <h3 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           Event Log
         </h3>
         <svg className="w-4 h-4 text-[var(--color-primary)]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,16 +65,16 @@ export function EventPreview({ schedules, delay = 0, className }: EventPreviewPr
                       : "border-[var(--color-primary)]/20 bg-[var(--color-bg-black)]"
                   )}
                 >
-                  <span className="text-[7px] text-[var(--color-text-secondary)]">{month}</span>
-                  <span className="text-[10px] font-bold font-mono">{day}</span>
+                  <span className="text-[9px] text-[var(--color-text-secondary)]">{month}</span>
+                  <span className="text-[11px] font-bold font-mono">{day}</span>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold uppercase truncate">
+                  <p className="text-[12px] font-bold uppercase truncate">
                     {schedule.title}
                   </p>
-                  <p className="text-[8px] text-[var(--color-text-secondary)]">
+                  <p className="text-[10px] text-[var(--color-text-secondary)]">
                     {date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
                   </p>
                 </div>
@@ -83,7 +83,7 @@ export function EventPreview({ schedules, delay = 0, className }: EventPreviewPr
                 {daysUntil <= 3 && (
                   <span
                     className={clsx(
-                      "text-[8px] font-mono px-1 py-0.5 shrink-0",
+                      "text-[10px] font-mono px-1 py-0.5 shrink-0",
                       daysUntil === 0
                         ? "bg-[var(--color-error)]/20 text-[var(--color-error)]"
                         : daysUntil === 1
@@ -99,7 +99,7 @@ export function EventPreview({ schedules, delay = 0, className }: EventPreviewPr
           })
         ) : (
           <div className="flex items-center justify-center h-full opacity-50">
-            <span className="text-[10px]">NO EVENTS</span>
+            <span className="text-[11px]">NO EVENTS</span>
           </div>
         )}
       </div>
@@ -109,7 +109,7 @@ export function EventPreview({ schedules, delay = 0, className }: EventPreviewPr
         href="/schedule"
         className={clsx(
           "mt-2 py-1.5 text-center",
-          "text-[9px] uppercase tracking-widest",
+          "text-[11px] uppercase tracking-widest",
           "border border-[var(--color-primary)]/20",
           "hover:bg-[var(--color-primary)] hover:text-[var(--color-bg-black)]",
           "transition-all duration-300"
