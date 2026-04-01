@@ -99,9 +99,9 @@ export default function GroupsPage() {
 
         <div className="flex-1 relative overflow-hidden group/scroll">
           <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[var(--color-bg-black)] to-transparent z-10 pointer-events-none opacity-60" />
-          <div className="h-full overflow-y-auto pr-2 custom-scrollbar overflow-x-visible">
+          <div className="h-full overflow-y-auto pr-2 custom-scrollbar overflow-x-hidden">
             {filteredGroups.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pb-20">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 pb-32">
                 <AnimatePresence mode="popLayout">
                   {filteredGroups.map((group, index) => (
                     <motion.div key={group.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, delay: index * 0.05 }}>
@@ -111,6 +111,7 @@ export default function GroupsPage() {
                 </AnimatePresence>
               </div>
             ) : (
+
               <div className="h-full flex flex-col items-center justify-center border border-dashed border-[var(--color-primary)]/10 rounded-lg">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} className="text-center">
                   <p className="text-[var(--color-text-secondary)] font-mono uppercase tracking-[0.2em] mb-4">No matching clusters found</p>

@@ -76,8 +76,8 @@ export default function MembersPage() {
 
         <div className="flex-1 relative overflow-hidden group/scroll">
           <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[var(--color-bg-black)] to-transparent z-10 pointer-events-none opacity-60" />
-          <div className="h-full overflow-y-auto pr-2 custom-scrollbar overflow-x-visible">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 pb-20">
+          <div className="h-full overflow-y-auto pr-2 custom-scrollbar overflow-x-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 pb-32">
               {filteredMembers.map((member, index) => (
                 <motion.div key={member.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, delay: index * 0.05 }}>
                   <MemberCard member={member} onClick={() => { setSelectedMember(member); setIsModalOpen(true); }} />

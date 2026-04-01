@@ -2,16 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { useAuthStore } from "@/stores/authStore";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { GlitchText } from "@/components/ui";
+import clsx from "clsx";
 
 export function SignupForm() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
   const [formData, setFormData] = useState({
     username: "",
-    name: "",
     email: "",
+    name: "",
     password: "",
     confirmPassword: "",
   });
@@ -25,165 +26,122 @@ export function SignupForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError("VALIDATION_ERROR: Passwords do not match");
       return;
     }
 
     setLoading(true);
+    setError("");
 
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || "Failed to sign up");
+        const data = await response.json();
+        throw new Error(data.message || "INITIALIZATION_FAILED: Registration error");
       }
 
-      // Store user data
-      setUser(data.user);
-
-      // Redirect to dashboard
-      router.push("/");
+      router.push("/auth/login?registered=true");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : "SYSTEM_FAILURE: Could not create node");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Username Input */}
-      <div className="space-y-2">
-        <label className="text-[var(--color-primary)] text-base font-mono">
-          &gt; USERNAME
-        </label>
-        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="admin_user"
-            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-            required
-          />
-        </div>
+    <div className="space-y-6 font-mono w-full max-w-md mx-auto">
+      <div className="space-y-1">
+        <GlitchText text="NODE_INITIALIZATION" as="h2" className="text-2xl font-black tracking-tighter text-[var(--color-primary)]" />
+        <p className="text-[9px] text-[var(--color-text-secondary)] uppercase tracking-[0.2em]">Deploying new member node to cluster</p>
       </div>
 
-      {/* Name Input */}
-      <div className="space-y-2">
-        <label className="text-[var(--color-primary)] text-base font-mono">
-          &gt; FULL NAME
-        </label>
-        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="John Doe"
-            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-            required
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+          {[
+            { label: "01_ID", name: "username", type: "text", placeholder: "ID_SEQUENCE" },
+            { label: "02_ALIAS", name: "name", type: "text", placeholder: "HUMAN_NAME" },
+          ].map((field) => (
+            <div key={field.name} className="space-y-1">
+              <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[{field.label}]</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={(formData as any)[field.name]}
+                onChange={handleChange}
+                placeholder={field.placeholder}
+                className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                required
+              />
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* Email Input */}
-      <div className="space-y-2">
-        <label className="text-[var(--color-primary)] text-base font-mono">
-          &gt; EMAIL ADDRESS
-        </label>
-        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
+        <div className="space-y-1">
+          <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[03_NODE_ADDRESS]</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="you@example.com"
-            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+            placeholder="EMAIL@ENIAC.COM"
+            className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
             required
           />
         </div>
-      </div>
 
-      {/* Password Input */}
-      <div className="space-y-2">
-        <label className="text-[var(--color-primary)] text-base font-mono">
-          &gt; PASSWORD
-        </label>
-        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-            required
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+          {[
+            { label: "04_KEY", name: "password", type: "password", placeholder: "********" },
+            { label: "05_VERIFY", name: "confirmPassword", type: "password", placeholder: "********" },
+          ].map((field) => (
+            <div key={field.name} className="space-y-1">
+              <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[{field.label}]</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={(formData as any)[field.name]}
+                onChange={handleChange}
+                placeholder={field.placeholder}
+                className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                required
+              />
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* Confirm Password Input */}
-      <div className="space-y-2">
-        <label className="text-[var(--color-primary)] text-base font-mono">
-          &gt; CONFIRM PASSWORD
-        </label>
-        <div className="relative border border-[var(--color-primary)]/30 rounded overflow-hidden">
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="••••••••"
-            className="w-full bg-[var(--color-bg-black)]/50 px-4 py-3 text-[var(--color-primary)] text-base placeholder-[var(--color-primary)]/30 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-            required
-          />
-        </div>
-      </div>
+        <AnimatePresence>
+          {error && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border-l border-red-500 text-red-500 p-2 text-[9px] uppercase font-bold">
+              !! ERROR: {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Error Message */}
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[var(--color-error)]/20 border border-[var(--color-error)]/50 text-[var(--color-error)] px-4 py-2 rounded text-base font-mono"
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          type="submit"
+          disabled={loading}
+          className={clsx(
+            "w-full mt-4 bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.2em] transition-all",
+            "hover:glow active:scale-95 disabled:opacity-50"
+          )}
         >
-          ✗ {error}
-        </motion.div>
-      )}
+          {loading ? "INITIALIZING_NODE..." : "EXECUTE_DEPLOYMENT"}
+        </motion.button>
+      </form>
 
-      {/* Submit Button */}
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        type="submit"
-        disabled={loading}
-        className="w-full mt-6 bg-[var(--color-primary)] text-[var(--color-bg-black)] font-bold py-3 text-base rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[var(--color-accent-glow)]"
-      >
-        {loading ? "REGISTERING..." : "CREATE ACCOUNT"}
-      </motion.button>
-    </form>
+      <div className="text-center">
+        <Link href="/auth/login" className="text-[9px] text-[var(--color-text-secondary)] uppercase hover:text-[var(--color-primary)] transition-colors">
+          {">"} Existing_Node? Return_to_Gateway
+        </Link>
+      </div>
+    </div>
   );
 }
