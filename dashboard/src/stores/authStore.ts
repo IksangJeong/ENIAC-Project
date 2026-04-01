@@ -17,10 +17,12 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isHydrated: boolean;
+  isInitialLoadComplete: boolean;
 
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  setInitialLoadComplete: (complete: boolean) => void;
   logout: () => void;
   clearError: () => void;
   hydrate: () => void;
@@ -33,6 +35,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: false,
   error: null,
   isHydrated: false,
+  isInitialLoadComplete: false,
 
   setUser: (user) => {
     set({
@@ -50,6 +53,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setLoading: (loading) => set({ loading }),
 
   setError: (error) => set({ error }),
+
+  setInitialLoadComplete: (complete) => set({ isInitialLoadComplete: complete }),
 
   logout: () => {
     set({

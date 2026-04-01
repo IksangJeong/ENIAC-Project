@@ -1,33 +1,42 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore, useAuthHydrate } from "@/stores/authStore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
+// 브라우저 탭이 유지되는 동안 딱 한 번만 실행됨을 보장하는 모듈 전역 변수
+let globalInitialLoadDone = false;
+
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const isHydrated = useAuthHydrate();
   const { status } = useSession();
+  
+  // globalInitialLoadDone이 true라면 즉시 로딩을 건너뜁니다.
+  const [isInitialLoading, setIsInitialLoading] = useState(!globalInitialLoadDone);
 
   useEffect(() => {
-    // NextAuth 세션 로딩 중이거나 Zustand가 복구되는 중이면 대기
-    if (status === "loading" || !isHydrated) return;
+    // 세션 정보가 확정되고 스토어가 준비되면 초기 로딩 완료 처리
+    if (status !== "loading" && isHydrated) {
+      globalInitialLoadDone = true;
+      setIsInitialLoading(false);
+    }
 
-    // NextAuth 세션이 없고 Zustand로도 인증되지 않은 경우에만 로그인 페이지로 리다이렉트
-    if (status === "unauthenticated" && !isAuthenticated) {
+    // 인증 확인 및 리다이렉트 (로딩 중이 아닐 때만 수행)
+    if (status === "unauthenticated" && !isAuthenticated && !isInitialLoading) {
       router.push("/auth/login");
     }
-  }, [isHydrated, isAuthenticated, status, router]);
+  }, [isHydrated, isAuthenticated, status, router, isInitialLoading]);
 
-  // 로딩 상태 표시
-  if (!isHydrated || status === "loading") {
+  // 로딩 화면: 앱 최초 접속 시(globalInitialLoadDone이 false일 때)에만 표시
+  if (isInitialLoading) {
     return (
       <div className="h-screen w-full bg-black flex items-center justify-center">
         <motion.div

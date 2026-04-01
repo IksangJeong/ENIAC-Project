@@ -23,6 +23,9 @@ import {
 } from "@/lib/mockData";
 import type { ServerStatus as ServerStatusType } from "@/types";
 
+// 앱 탭 유지 동안 한 번만 실행되도록 하는 모듈 전역 변수
+let dashboardInitialBootDone = false;
+
 export default function DashboardPage() {
   return (
     <ProtectedRoute>
@@ -34,7 +37,8 @@ export default function DashboardPage() {
 function DashboardContent() {
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
-  const [showBoot, setShowBoot] = useState(true);
+  // 이미 부팅 애니메이션이 완료되었다면 false로 시작
+  const [showBoot, setShowBoot] = useState(!dashboardInitialBootDone);
 
   // Simulate real-time server status updates
   useEffect(() => {
@@ -53,32 +57,31 @@ function DashboardContent() {
     return () => clearInterval(interval);
   }, []);
 
-  // Boot animation
+  // Boot animation control
   useEffect(() => {
-    const timer = setTimeout(() => setShowBoot(false), 2500);
-    return () => clearTimeout(timer);
+    if (!dashboardInitialBootDone) {
+      const timer = setTimeout(() => {
+        setShowBoot(false);
+        dashboardInitialBootDone = true;
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
     <>
       <PageLayout activePage="dashboard" isConnected={isConnected}>
-        {/* Dashboard Grid - Scrollable on mobile, viewport-fit on desktop */}
         <div className="lg:h-full grid gap-3 lg:gap-4 grid-rows-[auto_auto_auto] lg:grid-rows-[auto_1fr_1fr] pb-4 lg:pb-0">
-          {/* Row 1: Stats + Clock/Quote */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
-            {/* Stats Grid - 8 cols on desktop */}
             <div className="lg:col-span-8">
               <CompactStatsGrid data={serverStatus} delay={0.1} />
             </div>
-            {/* Clock + Quote - 4 cols on desktop */}
             <div className="lg:col-span-4 hidden lg:block">
               <ClockQuotePanel quote={mockQuote} delay={0.2} />
             </div>
           </div>
 
-          {/* Row 2: Commit + Algorithm | Active Nodes */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 lg:min-h-0">
-            {/* Left Section - 8 cols */}
             <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
               <div className="min-h-[180px]">
                 <CommitPreview rankings={mockCommitRankings} delay={0.3} />
@@ -87,19 +90,15 @@ function DashboardContent() {
                 <AlgorithmSummary challenges={mockChallenges} delay={0.4} />
               </div>
             </div>
-            {/* Right Section - 4 cols */}
             <div className="lg:col-span-4 min-h-[180px]">
               <ActiveNodesPreview users={mockUsers} delay={0.5} />
             </div>
           </div>
 
-          {/* Row 3: Event Log (full width on mobile, right side on desktop) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 lg:min-h-0">
-            {/* Placeholder for left side on desktop */}
             <div className="hidden lg:block lg:col-span-8">
               <BroadcastPanel delay={0.6} />
             </div>
-            {/* Event Log - Right side */}
             <div className="lg:col-span-4 min-h-[180px]">
               <EventPreview schedules={mockSchedules} delay={0.7} />
             </div>
@@ -107,13 +106,11 @@ function DashboardContent() {
         </div>
       </PageLayout>
 
-      {/* Boot Animation Overlay */}
       {showBoot && <BootAnimation />}
     </>
   );
 }
 
-// Broadcast Panel for the empty space
 function BroadcastPanel({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div
@@ -122,7 +119,6 @@ function BroadcastPanel({ delay = 0 }: { delay?: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
     >
-      {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           System Broadcasts
@@ -132,7 +128,6 @@ function BroadcastPanel({ delay = 0 }: { delay?: number }) {
         </svg>
       </div>
 
-      {/* Content */}
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center opacity-50">
           <motion.div
@@ -154,7 +149,6 @@ function BroadcastPanel({ delay = 0 }: { delay?: number }) {
   );
 }
 
-// Boot Animation Component
 function BootAnimation() {
   const [phase, setPhase] = useState<"logo" | "loading" | "done">("logo");
 
