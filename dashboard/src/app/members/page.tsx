@@ -13,15 +13,15 @@ import clsx from "clsx";
 function MembersPageContent() {
   const searchParams = useSearchParams();
   const targetMemberId = searchParams.get("id");
-  const { getAllMembers } = useAuthStore();
+  const { user, getAllMembers } = useAuthStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 중앙 집중화된 멤버 리스트 사용
-  const allMembers = useMemo(() => getAllMembers(), [getAllMembers]);
+  // 중앙 집중화된 멤버 리스트 사용 (user 상태 변화에 반응하도록 의존성 추가)
+  const allMembers = useMemo(() => getAllMembers(), [user, getAllMembers]);
 
   // 딥링크 처리
   useEffect(() => {

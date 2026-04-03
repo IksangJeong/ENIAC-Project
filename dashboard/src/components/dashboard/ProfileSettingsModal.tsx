@@ -169,8 +169,49 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">Skill_Modules</label>
+                    <label className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">Biography</label>
+                    <textarea 
+                      value={formData.bio} 
+                      onChange={(e) => setFormData({...formData, bio: e.target.value})} 
+                      rows={3}
+                      placeholder="Tell us about yourself..."
+                      className="w-full bg-[var(--color-bg-black)] border border-[var(--color-primary)]/20 rounded px-4 py-2 text-xs text-white focus:border-[var(--color-primary)] resize-none" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">Skill_Modules (Comma separated)</label>
                     <input type="text" value={formData.skills} onChange={(e) => setFormData({...formData, skills: e.target.value})} className="w-full bg-[var(--color-bg-black)] border border-[var(--color-primary)]/20 rounded px-4 py-2 text-xs text-white focus:border-[var(--color-primary)]" />
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-[11px] font-bold text-[var(--color-primary)] uppercase tracking-[0.3em] flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full" /> 03_SOCIAL_CHANNELS
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">GitHub_ID</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-[var(--color-primary)]/40 font-mono">@</span>
+                        <input 
+                          type="text" 
+                          value={formData.github} 
+                          onChange={(e) => setFormData({...formData, github: e.target.value})} 
+                          placeholder="username"
+                          className="w-full bg-[var(--color-bg-black)] border border-[var(--color-primary)]/20 rounded pl-7 pr-4 py-2 text-xs text-white focus:border-[var(--color-primary)]" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] text-[var(--color-text-secondary)] uppercase font-mono">Personal_Site</label>
+                      <input 
+                        type="url" 
+                        value={formData.website} 
+                        onChange={(e) => setFormData({...formData, website: e.target.value})} 
+                        placeholder="https://example.com"
+                        className="w-full bg-[var(--color-bg-black)] border border-[var(--color-primary)]/20 rounded px-4 py-2 text-xs text-white focus:border-[var(--color-primary)]" 
+                      />
+                    </div>
                   </div>
                 </section>
               </div>

@@ -92,15 +92,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     
     if (currentUser) {
       const existingIndex = list.findIndex(m => m.id === currentUser.id);
+      
+      // currentUser의 모든 필드를 Member 타입에 맞게 매핑
       const myNode: Member = {
         ...currentUser,
         id: currentUser.id,
         name: currentUser.name || "Unknown Member",
+        username: currentUser.username || "guest",
         status: "online",
-        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0]
+        role: currentUser.role || "member",
+        position: currentUser.position || "Member",
+        department: currentUser.department || "Management",
+        bio: currentUser.bio || "", // bio 필드 명시적 보장
+        skills: currentUser.skills || [],
+        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0],
+        socialLinks: currentUser.socialLinks || { github: currentUser.username }
       } as Member;
 
       if (existingIndex !== -1) {
+        // 기존 mock 데이터와 병합하되 내 실시간 데이터(myNode)를 우선함
         list[existingIndex] = { ...list[existingIndex], ...myNode };
       } else {
         list = [myNode, ...list];
