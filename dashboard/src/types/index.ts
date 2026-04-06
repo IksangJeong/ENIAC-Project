@@ -1,3 +1,5 @@
+import { DepartmentId } from "@/lib/constants";
+
 // ============================================
 // ENIAC Dashboard - Type Definitions
 // ============================================
@@ -15,12 +17,56 @@ export interface ServerStatus {
 }
 
 // User Types
+export type UserRole = "admin" | "member" | "viewer";
+
 export interface User {
   id: string;
   name: string;
+  username?: string;
+  email?: string;
   avatar?: string;
+  role?: UserRole;
   status: "online" | "offline" | "away";
+  statusMessage?: string;
+  metrics?: {
+    todayCommits: number;
+    weeklyActivity: number[]; // Array of commit counts for last 7 days
+  };
   lastSeen?: string;
+}
+
+// Member Types (Extended from User for the Members Page)
+export interface Member extends User {
+  position: string; // e.g., "Lead Developer", "UI Designer", "PM"
+  department: DepartmentId; // Strictly typed now
+  bio?: string;
+  skills: string[];
+  socialLinks?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+  joinDate: string;
+}
+
+// Group Types (New: Study/Project Clusters)
+export type GroupType = "study" | "project";
+export type GroupStatus = "booting" | "processing" | "stabilized" | "halted";
+
+export interface Group {
+  id: string;
+  name: string;
+  type: GroupType;
+  status: GroupStatus;
+  description: string;
+  goal?: string;
+  progress: number; // 0 to 100
+  leaderId: string; // Member.id
+  memberIds: string[]; // Member.ids
+  techStack: string[];
+  repoUrl?: string;
+  docUrl?: string;
+  createdAt: string;
 }
 
 // Crowd Level
@@ -37,17 +83,24 @@ export interface CommitRanking {
 }
 
 // Schedule Types
-export type ScheduleType = "event" | "seminar" | "study";
+export type ScheduleType = "event" | "seminar" | "study" | "meeting";
+export type ScheduleStatus = "upcoming" | "active" | "completed" | "archived";
+export type SchedulePriority = "normal" | "high" | "critical";
 
 export interface Schedule {
   id: string;
   title: string;
   type: ScheduleType;
+  status: ScheduleStatus;
+  priority: SchedulePriority;
   date: string;
   endDate?: string;
   location?: string;
   description?: string;
   participants?: number;
+  participantIds?: string[]; // New: Linked member IDs
+  groupId?: string; // New: Linked group ID (optional)
+  isOfficial?: boolean;
 }
 
 // Quote Types

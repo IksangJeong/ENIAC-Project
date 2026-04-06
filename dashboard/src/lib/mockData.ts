@@ -1,6 +1,8 @@
 import type {
   ServerStatus,
   User,
+  Member,
+  Group,
   CrowdLevel,
   CommitRanking,
   Schedule,
@@ -9,117 +11,332 @@ import type {
   Announcement,
 } from "@/types";
 
+// Mock Members: 총 12명의 정예 노드 구성
+export const mockMembers: Member[] = [
+  {
+    id: "1",
+    name: "김철수",
+    username: "chulsu_kim",
+    status: "online",
+    statusMessage: "시스템 아키텍처 설계 중...",
+    avatar: "",
+    role: "admin",
+    position: "Lead Developer",
+    department: "Backend",
+    bio: "시스템 아키텍처와 분산 처리에 관심이 많은 백엔드 개발자입니다.",
+    skills: ["Node.js", "Go", "Kubernetes", "PostgreSQL"],
+    joinDate: "2024-03-01",
+    metrics: { todayCommits: 8, weeklyActivity: [3, 5, 2, 7, 4, 6, 8] },
+    socialLinks: { github: "https://github.com" },
+  },
+  {
+    id: "2",
+    name: "이영희",
+    username: "younghee_lee",
+    status: "online",
+    statusMessage: "새로운 디자인 시스템 작업 중 🎨",
+    avatar: "",
+    role: "member",
+    position: "UI/UX Designer",
+    department: "Design",
+    bio: "사용자 중심의 직관적인 디자인을 지향합니다.",
+    skills: ["Figma", "React", "TailwindCSS", "Framer Motion"],
+    joinDate: "2024-05-15",
+    metrics: { todayCommits: 3, weeklyActivity: [1, 2, 4, 1, 5, 2, 3] },
+    socialLinks: { github: "https://github.com", website: "https://portfolio.com" },
+  },
+  {
+    id: "3",
+    name: "박지훈",
+    username: "jihoon_park",
+    status: "online",
+    statusMessage: "성능 최적화 챌린지 참여 중",
+    avatar: "",
+    role: "member",
+    position: "Frontend Developer",
+    department: "Frontend",
+    bio: "성능 최적화와 사용자 경험에 진심인 프론트엔드 개발자입니다.",
+    skills: ["React", "Next.js", "TypeScript", "Three.js"],
+    joinDate: "2024-06-20",
+    metrics: { todayCommits: 12, weeklyActivity: [5, 8, 4, 9, 11, 7, 12] },
+    socialLinks: { github: "https://github.com" },
+  },
+  {
+    id: "4",
+    name: "정민준",
+    username: "minjun_jeong",
+    status: "online",
+    statusMessage: "Flutter 위젯 테스트 중",
+    avatar: "",
+    role: "member",
+    position: "Mobile Developer",
+    department: "Mobile",
+    bio: "플러터와 코틀린을 사랑하는 모바일 개발자입니다.",
+    skills: ["Flutter", "Kotlin", "Firebase", "Dart"],
+    joinDate: "2024-08-10",
+    metrics: { todayCommits: 5, weeklyActivity: [2, 3, 1, 4, 6, 2, 5] },
+  },
+  {
+    id: "5",
+    name: "강서연",
+    username: "seoyeon_kang",
+    status: "online",
+    statusMessage: "4월 행사 일정 조율 중 📅",
+    avatar: "",
+    role: "member",
+    position: "PM",
+    department: "Management",
+    bio: "효율적인 협업 프로세스와 일정 관리를 중시합니다.",
+    skills: ["Agile", "Jira", "Communication", "Data Analysis"],
+    joinDate: "2024-09-05",
+    metrics: { todayCommits: 1, weeklyActivity: [0, 1, 0, 2, 1, 0, 1] },
+  },
+  {
+    id: "6",
+    name: "조현우",
+    username: "hyunwoo_cho",
+    status: "away",
+    statusMessage: "잠시 자리 비움 (인프라 점검)",
+    avatar: "",
+    role: "member",
+    position: "DevOps Engineer",
+    department: "Infrastructure",
+    bio: "자동화와 인프라 코드화에 열정을 가진 데브옵스 엔지니어입니다.",
+    skills: ["Docker", "Terraform", "AWS", "CI/CD"],
+    joinDate: "2025-01-12",
+    metrics: { todayCommits: 15, weeklyActivity: [10, 12, 8, 14, 11, 9, 15] },
+  },
+  {
+    id: "7",
+    name: "윤수빈",
+    username: "subin_yoon",
+    status: "offline",
+    statusMessage: "개인 스터디 중",
+    avatar: "",
+    role: "member",
+    position: "Junior Frontend",
+    department: "Frontend",
+    bio: "성장하는 즐거움을 아는 개발자입니다.",
+    skills: ["JavaScript", "CSS", "React"],
+    joinDate: "2025-02-01",
+    metrics: { todayCommits: 0, weeklyActivity: [2, 1, 0, 0, 3, 1, 0] },
+  },
+  {
+    id: "8",
+    name: "임도현",
+    username: "dohyun_lim",
+    status: "online",
+    statusMessage: "DB 쿼리 최적화 완료!",
+    avatar: "",
+    role: "member",
+    position: "Database Engineer",
+    department: "Backend",
+    bio: "데이터의 흐름을 제어하는 것에 매력을 느낍니다.",
+    skills: ["SQL", "PostgreSQL", "Redis", "Python"],
+    joinDate: "2024-11-20",
+    metrics: { todayCommits: 6, weeklyActivity: [4, 3, 5, 2, 6, 4, 6] },
+  },
+  {
+    id: "9",
+    name: "최지민",
+    username: "jimin_choi",
+    status: "away",
+    statusMessage: "아이콘 세트 제작 중 🎨",
+    avatar: "",
+    role: "member",
+    position: "Graphic Designer",
+    department: "Design",
+    bio: "비주얼 스토리텔링을 연구합니다.",
+    skills: ["Illustrator", "Photoshop", "After Effects"],
+    joinDate: "2025-01-05",
+    metrics: { todayCommits: 2, weeklyActivity: [1, 1, 2, 0, 4, 3, 2] },
+  },
+  {
+    id: "10",
+    name: "한예슬",
+    username: "yeseul_han",
+    status: "online",
+    statusMessage: "iOS 앱 배포 준비 중 🚀",
+    avatar: "",
+    role: "member",
+    position: "iOS Developer",
+    department: "Mobile",
+    bio: "애플 생태계를 사랑하는 모바일 개발자입니다.",
+    skills: ["Swift", "SwiftUI", "Combine"],
+    joinDate: "2024-07-12",
+    metrics: { todayCommits: 9, weeklyActivity: [5, 6, 4, 8, 7, 5, 9] },
+  },
+  {
+    id: "11",
+    name: "백건우",
+    username: "gunwoo_baek",
+    status: "offline",
+    statusMessage: "인프라 보안 강의 수강 중",
+    avatar: "",
+    role: "member",
+    position: "Security Analyst",
+    department: "Infrastructure",
+    bio: "안전한 시스템 구축이 제 최우선 순위입니다.",
+    skills: ["Pentesting", "Network Security", "Linux"],
+    joinDate: "2024-12-15",
+    metrics: { todayCommits: 0, weeklyActivity: [1, 0, 2, 1, 0, 0, 0] },
+  },
+  {
+    id: "12",
+    name: "서은우",
+    username: "eunwoo_seo",
+    status: "online",
+    statusMessage: "동아리 예산안 작성 완료",
+    avatar: "",
+    role: "member",
+    position: "Operations Manager",
+    department: "Management",
+    bio: "원활한 조직 운영을 위한 서포터입니다.",
+    skills: ["Management", "Excel", "Public Relations"],
+    joinDate: "2024-04-22",
+    metrics: { todayCommits: 1, weeklyActivity: [1, 0, 1, 2, 1, 1, 1] },
+  }
+];
+
+// Mock Groups
+export const mockGroups: Group[] = [
+  {
+    id: "g1",
+    name: "방구석 클라우드",
+    type: "project",
+    status: "processing",
+    description: "동아리 내부 시스템 및 대시보드 개발 프로젝트",
+    goal: "HUD 감성의 고도화된 클라우드 대시보드 구축",
+    progress: 65,
+    leaderId: "1",
+    memberIds: ["1", "2", "3", "6", "8"],
+    techStack: ["React", "Next.js", "Zustand", "Framer Motion"],
+    repoUrl: "https://github.com/seru1027/ENIAC-Project",
+    createdAt: "2024-01-10",
+  },
+  {
+    id: "g2",
+    name: "C언어 스터디(순승현)",
+    type: "study",
+    status: "processing",
+    description: "C언어 기초부터 자료구조까지 마스터하는 스터디",
+    goal: "포인터와 메모리 구조의 완벽한 이해",
+    progress: 40,
+    leaderId: "3",
+    memberIds: ["3", "4", "5", "7"],
+    techStack: ["C", "GDB", "Memory Management"],
+    createdAt: "2024-03-05",
+  },
+  {
+    id: "g3",
+    name: "System Hacking",
+    type: "study",
+    status: "booting",
+    description: "시스템 보안 및 취약점 분석 스터디",
+    goal: "CTF 대회 참여 및 시스템 해킹 기법 습득",
+    progress: 15,
+    leaderId: "6",
+    memberIds: ["6", "1", "11"],
+    techStack: ["Linux", "Assembly", "Pwnable", "Python"],
+    createdAt: "2024-03-20",
+  },
+];
+
+// Mock Schedules - 스코프 구분 적용
+export const mockSchedules: Schedule[] = [
+  {
+    id: "1",
+    title: "React 심화: Server Components",
+    type: "seminar",
+    status: "active",
+    priority: "high",
+    date: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    endDate: new Date(Date.now() + 1000 * 60 * 90).toISOString(),
+    location: "Online (Discord)",
+    description: "Next.js 14+ 서버 컴포넌트의 동작 원리와 최적화 전략에 대해 알아봅니다.",
+    participants: 12,
+    participantIds: ["1", "3", "5"],
+    groupId: "g1", // [Group Scope] 방구석 클라우드 전용
+    isOfficial: false,
+  },
+  {
+    id: "2",
+    title: "알고리즘 스터디 (A팀)",
+    type: "study",
+    status: "upcoming",
+    priority: "normal",
+    date: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+    location: "동아리방",
+    description: "백준 골드 난이도 동적 계획법 문제 풀이",
+    participants: 6,
+    participantIds: ["1", "4", "6", "8"],
+    groupId: "g2", // [Group Scope] C언어 스터디 전용
+    isOfficial: false,
+  },
+  {
+    id: "3",
+    title: "ENIAC 정기 전체 세미나",
+    type: "event",
+    status: "upcoming",
+    priority: "critical",
+    date: new Date("2026-04-06T18:00:00").toISOString(),
+    endDate: new Date("2026-04-06T20:00:00").toISOString(),
+    location: "IT관 B101호",
+    description: "동아리 전원이 참석하는 정기 지식 공유 세션입니다.",
+    participants: 40,
+    participantIds: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    // No groupId -> [Global Scope] 전체 공지용
+    isOfficial: true,
+  },
+  {
+    id: "4",
+    title: "신입 부원 환영회",
+    type: "event",
+    status: "completed",
+    priority: "normal",
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+    location: "학교 근처 식당",
+    description: "새로 들어온 부원들과의 친목 도모를 위한 자리입니다.",
+    participants: 35,
+    participantIds: ["1", "2", "5", "12"], 
+    isOfficial: true,
+  },
+];
+
 // Mock Server Status
 export const mockServerStatus: ServerStatus = {
   cpu: 45.2,
-  ram: {
-    used: 8192,
-    total: 16384,
-    percentage: 50,
-  },
-  uptime: 345600, // 4 days
+  ram: { used: 8192, total: 16384, percentage: 50 },
+  uptime: 345600,
   temperature: 52,
 };
 
 // Mock Users
-export const mockUsers: User[] = [
-  { id: "1", name: "김철수", status: "online", avatar: "" },
-  { id: "2", name: "이영희", status: "online", avatar: "" },
-  { id: "3", name: "박지훈", status: "online", avatar: "" },
-  { id: "4", name: "정민준", status: "online", avatar: "" },
-  { id: "5", name: "강서연", status: "online", avatar: "" },
-  { id: "6", name: "조현우", status: "away", avatar: "" },
-  { id: "7", name: "윤수빈", status: "offline", avatar: "" },
-  { id: "8", name: "임도현", status: "offline", avatar: "" },
-];
+export const mockUsers: User[] = mockMembers.map(m => ({
+  id: m.id,
+  name: m.name,
+  status: m.status,
+  avatar: m.avatar,
+}));
 
 // Mock Crowd Level
 export const mockCrowdLevel: CrowdLevel = "medium";
 
 // Mock Commit Rankings
-export const mockCommitRankings: CommitRanking[] = [
-  {
-    rank: 1,
-    userId: "1",
-    username: "김철수",
-    avatar: "",
-    commits: 24,
-    trend: "up",
-  },
-  {
-    rank: 2,
-    userId: "3",
-    username: "박지훈",
-    avatar: "",
-    commits: 18,
-    trend: "same",
-  },
-  {
-    rank: 3,
-    userId: "2",
-    username: "이영희",
-    avatar: "",
-    commits: 15,
-    trend: "up",
-  },
-  {
-    rank: 4,
-    userId: "4",
-    username: "정민준",
-    avatar: "",
-    commits: 12,
-    trend: "down",
-  },
-  {
-    rank: 5,
-    userId: "5",
-    username: "강서연",
-    avatar: "",
-    commits: 8,
-    trend: "same",
-  },
-];
-
-// Mock Schedules
-export const mockSchedules: Schedule[] = [
-  {
-    id: "1",
-    title: "Spring Boot 스터디",
-    type: "study",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // Tomorrow
-    location: "동아리방",
-    participants: 8,
-  },
-  {
-    id: "2",
-    title: "알고리즘 세미나: 그래프 탐색",
-    type: "seminar",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days
-    location: "공학관 302호",
-    participants: 15,
-  },
-  {
-    id: "3",
-    title: "ENIAC 정기 모임",
-    type: "event",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(), // 1 week
-    location: "학생회관 세미나실",
-    participants: 25,
-  },
-  {
-    id: "4",
-    title: "React 심화 스터디",
-    type: "study",
-    date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10).toISOString(),
-    location: "동아리방",
-    participants: 6,
-  },
-];
+export const mockCommitRankings: CommitRanking[] = mockMembers
+  .slice(0, 5)
+  .map((m, i) => ({
+    rank: i + 1,
+    userId: m.id,
+    username: m.name,
+    avatar: m.avatar || "",
+    commits: m.metrics?.todayCommits || 0,
+    trend: "up" as const,
+  }));
 
 // Mock Quote
 export const mockQuote: Quote = {
-  quote:
-    "프로그래밍은 생각의 도구입니다. 컴퓨터에게 무엇을 할지 알려주는 것이 아니라, 문제를 어떻게 생각할지를 배우는 것입니다.",
+  quote: "프로그래밍은 생각의 도구입니다. 컴퓨터에게 무엇을 할지 알려주는 것이 아니라, 문제를 어떻게 생각할지를 배우는 것입니다.",
   author: "Edsger W. Dijkstra",
   category: "Programming",
 };
@@ -131,65 +348,27 @@ export const mockChallenges: AlgorithmChallenge[] = [
     problemTitle: "이진 탐색 트리 순회",
     difficulty: "medium",
     status: "in_progress",
-    startTime: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // Started 30 min ago
-    participants: [
-      { userId: "1", username: "김철수", avatar: "", solved: true, solveTime: 1200 },
-      { userId: "2", username: "이영희", avatar: "", solved: true, solveTime: 1450 },
-      { userId: "3", username: "박지훈", avatar: "", solved: false },
-      { userId: "4", username: "정민준", avatar: "", solved: false },
-      { userId: "5", username: "강서연", avatar: "", solved: true, solveTime: 980 },
-      { userId: "6", username: "조현우", avatar: "", solved: false },
-    ],
+    startTime: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    participants: mockMembers.slice(0, 6).map(m => ({
+      userId: m.id,
+      username: m.name,
+      avatar: m.avatar || "",
+      solved: Math.random() > 0.5,
+    })),
   },
 ];
 
 // Mock Announcements
 export const mockAnnouncements: Announcement[] = [
-  {
-    id: "1",
-    title: "3월 정기 모임 안내: 3/25(토) 오후 2시",
-    content: "3월 정기 모임이 예정되어 있습니다.",
-    createdAt: new Date().toISOString(),
-    priority: "important",
-    author: "운영진",
-  },
-  {
-    id: "2",
-    title: "서버 점검 예정: 3/20 새벽 2시~4시",
-    content: "서버 점검이 예정되어 있습니다.",
-    createdAt: new Date().toISOString(),
-    priority: "urgent",
-    author: "서버팀",
-  },
-  {
-    id: "3",
-    title: "신규 프로젝트 팀원 모집 중",
-    content: "새로운 프로젝트 팀원을 모집합니다.",
-    createdAt: new Date().toISOString(),
-    priority: "normal",
-    author: "프로젝트팀",
-  },
-  {
-    id: "4",
-    title: "알고리즘 스터디 신청 마감 임박",
-    content: "알고리즘 스터디 신청이 곧 마감됩니다.",
-    createdAt: new Date().toISOString(),
-    priority: "normal",
-    author: "스터디팀",
-  },
+  { id: "1", title: "3월 정기 모임 안내", content: "3월 정기 모임이 예정되어 있습니다.", createdAt: new Date().toISOString(), priority: "important", author: "운영진" },
 ];
 
-// Function to simulate real-time data changes
 export function getRandomServerStatus(): ServerStatus {
   return {
-    cpu: Math.random() * 60 + 20, // 20-80%
-    ram: {
-      used: Math.floor(Math.random() * 4096) + 6144, // 6-10 GB
-      total: 16384,
-      percentage: Math.random() * 30 + 40, // 40-70%
-    },
-    uptime: mockServerStatus.uptime + Math.floor(Date.now() / 1000),
-    temperature: Math.floor(Math.random() * 15) + 45, // 45-60°C
+    cpu: Math.random() * 60 + 20,
+    ram: { used: Math.floor(Math.random() * 4096) + 6144, total: 16384, percentage: Math.random() * 30 + 40 },
+    uptime: 345600 + Math.floor(Date.now() / 1000),
+    temperature: Math.floor(Math.random() * 15) + 45,
   };
 }
 
