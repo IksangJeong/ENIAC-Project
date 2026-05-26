@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Mock user database
-const mockUsers: any[] = [];
+import { serverUsers } from "@/lib/serverDb";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    if (mockUsers.some((u) => u.username === username)) {
+    if (serverUsers.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
       return NextResponse.json(
         { message: "Username already in use" },
         { status: 409 }
@@ -24,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if email already exists
-    if (mockUsers.some((u) => u.email === email)) {
+    if (serverUsers.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
       return NextResponse.json(
         { message: "Email already in use" },
         { status: 409 }
@@ -49,28 +47,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new user - In production:
-    // - Hash password with bcryptjs
-    // - Save to database
-    // - Generate JWT token
+    // Create new user (Pending Admin Approval)
     const newUser = {
       id: Date.now().toString(),
       username,
       name,
       email,
-      password, // NEVER store plain passwords in production!
+      password,
+      role: "member" as const,
+      clearance: "member" as const,
+      isApproved: false,
     };
 
-    mockUsers.push(newUser);
+    serverUsers.push(newUser);
 
     return NextResponse.json(
       {
-        message: "Account created successfully",
+        message: "Account created successfully. Awaiting admin approval.",
         user: {
           id: newUser.id,
           username: newUser.username,
           name: newUser.name,
           email: newUser.email,
+          role: newUser.role,
+          clearance: newUser.clearance,
+          isApproved: newUser.isApproved,
         },
       },
       { status: 201 }

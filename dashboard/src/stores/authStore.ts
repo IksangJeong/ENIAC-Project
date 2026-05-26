@@ -1,15 +1,17 @@
 import { create } from "zustand";
 import { useEffect, useState } from "react";
 import { DepartmentId } from "@/lib/constants";
-import { mockMembers } from "@/lib/mockData";
-import { Member } from "@/types";
+import { Member, ClearanceType } from "@/types";
+import { fetchMembers } from "@/lib/api";
 
 export interface User {
   id: string;
   username: string;
   name: string;
   email: string;
-  role?: "admin" | "member" | "viewer";
+  role: "admin" | "member";
+  clearance?: ClearanceType;
+  isApproved: boolean;
   avatar?: string;
   position?: string;
   department?: DepartmentId;
@@ -22,7 +24,6 @@ export interface User {
   };
   socialLinks?: {
     github?: string;
-    twitter?: string;
     website?: string;
   };
   joinDate?: string;
@@ -37,6 +38,7 @@ interface AuthState {
   isHydrated: boolean;
   isInitialLoadComplete: boolean;
   isProfileSettingsOpen: boolean;
+  members: Member[];
 
   // Actions
   setUser: (user: User | null) => void;
@@ -48,6 +50,7 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
   hydrate: () => void;
+  loadMembers: () => Promise<void>;
   
   // Selectors (Derived state)
   getAllMembers: () => Member[];
@@ -62,12 +65,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isHydrated: false,
   isInitialLoadComplete: false,
   isProfileSettingsOpen: false,
+  members: [],
 
   setUser: (user) => {
     set({
       user,
       isAuthenticated: !!user,
-      isAdmin: user?.role === "admin",
+      isAdmin: user?.clearance === "root" || user?.clearance === "officer" || user?.role === "admin",
       error: null,
     });
     if (user) localStorage.setItem("authUser", JSON.stringify(user));
@@ -79,44 +83,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const updatedUser = { ...currentUser, ...updates };
       set({
         user: updatedUser,
-        isAdmin: updatedUser.role === "admin",
+        isAdmin: updatedUser.clearance === "root" || updatedUser.clearance === "officer" || updatedUser.role === "admin",
       });
       localStorage.setItem("authUser", JSON.stringify(updatedUser));
     }
   },
 
-  // 시스템 전체에서 본인 노드가 포함된 멤버 리스트를 가져오는 단일 창구
   getAllMembers: () => {
-    const currentUser = get().user;
-    let list = [...mockMembers];
-    
-    if (currentUser) {
-      const existingIndex = list.findIndex(m => m.id === currentUser.id);
-      
-      // currentUser의 모든 필드를 Member 타입에 맞게 매핑
-      const myNode: Member = {
-        ...currentUser,
-        id: currentUser.id,
-        name: currentUser.name || "Unknown Member",
-        username: currentUser.username || "guest",
-        status: "online",
-        role: currentUser.role || "member",
-        position: currentUser.position || "Member",
-        department: currentUser.department || "Management",
-        bio: currentUser.bio || "", // bio 필드 명시적 보장
-        skills: currentUser.skills || [],
-        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0],
-        socialLinks: currentUser.socialLinks || { github: currentUser.username }
-      } as Member;
+    return get().members;
+  },
 
-      if (existingIndex !== -1) {
-        // 기존 mock 데이터와 병합하되 내 실시간 데이터(myNode)를 우선함
-        list[existingIndex] = { ...list[existingIndex], ...myNode };
-      } else {
-        list = [myNode, ...list];
-      }
+  loadMembers: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await fetchMembers();
+      set({ members: data, loading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
     }
-    return list;
   },
 
   setLoading: (loading) => set({ loading }),
@@ -139,7 +123,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({
           user,
           isAuthenticated: true,
-          isAdmin: user?.role === "admin",
+          isAdmin: user?.clearance === "root" || user?.clearance === "officer" || user?.role === "admin",
           isHydrated: true,
         });
       } else {

@@ -1,36 +1,74 @@
 import { create } from "zustand";
 import { Schedule } from "@/types";
-import { mockSchedules as initialSchedules } from "@/lib/mockData";
+import { fetchSchedules, createSchedule, updateSchedule, deleteSchedule } from "@/lib/api";
 
 interface ScheduleState {
   schedules: Schedule[];
-  addSchedule: (newSchedule: Schedule) => void;
-  updateSchedule: (id: string, updatedSchedule: Partial<Schedule>) => void;
-  deleteSchedule: (id: string) => void;
+  loading: boolean;
+  error: string | null;
+  
+  // Actions
+  loadSchedules: () => Promise<void>;
+  addSchedule: (newSchedule: Schedule) => Promise<void>;
+  updateSchedule: (id: string, updatedSchedule: Partial<Schedule>) => Promise<void>;
+  deleteSchedule: (id: string) => Promise<void>;
   getScheduleById: (id: string) => Schedule | undefined;
 }
 
 export const useScheduleStore = create<ScheduleState>((set, get) => ({
-  schedules: initialSchedules,
+  schedules: [],
+  loading: false,
+  error: null,
+
+  loadSchedules: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await fetchSchedules();
+      set({ schedules: data, loading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
+  },
   
-  addSchedule: (newSchedule) => {
-    set((state) => ({
-      schedules: [...state.schedules, newSchedule],
-    }));
+  addSchedule: async (newSchedule) => {
+    set({ loading: true, error: null });
+    try {
+      const savedSchedule = await createSchedule(newSchedule);
+      set((state) => ({
+        schedules: [...state.schedules, savedSchedule],
+        loading: false
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
   },
 
-  updateSchedule: (id, updatedFields) => {
-    set((state) => ({
-      schedules: state.schedules.map((s) => 
-        s.id === id ? { ...s, ...updatedFields } : s
-      ),
-    }));
+  updateSchedule: async (id, updatedFields) => {
+    set({ loading: true, error: null });
+    try {
+      const savedSchedule = await updateSchedule(id, updatedFields);
+      set((state) => ({
+        schedules: state.schedules.map((s) => 
+          s.id === id ? savedSchedule : s
+        ),
+        loading: false
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
   },
 
-  deleteSchedule: (id) => {
-    set((state) => ({
-      schedules: state.schedules.filter((s) => s.id !== id),
-    }));
+  deleteSchedule: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      await deleteSchedule(id);
+      set((state) => ({
+        schedules: state.schedules.filter((s) => s.id !== id),
+        loading: false
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
   },
   
   getScheduleById: (id) => {

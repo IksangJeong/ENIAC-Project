@@ -127,70 +127,28 @@ export function TopNavbar({
               className="text-right hover:opacity-80 transition-opacity"
             >
               <div className="flex items-center justify-end gap-1">
-                {user?.role === "admin" && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]"
-                    title="System Administrator"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-3 h-3"
-                    >
-                      <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
-                    </svg>
-                  </motion.span>
-                )}
-                <p className={clsx(
-                  "text-[11px] font-bold uppercase tracking-tight",
-                  user?.role === "admin" ? "text-amber-400" : "text-[var(--color-text-primary)]"
-                )}>
+                <p className="text-[11px] font-bold uppercase tracking-tight text-[var(--color-text-primary)]">
                   {user?.name || 'Guest'}
                 </p>
               </div>
               <p className="text-[10px] text-[var(--color-text-secondary)] uppercase">
-                {user?.role === "admin" ? "Level 4 Admin" : user?.username || 'Unknown'}
+                {user?.username || 'Unknown'}
               </p>
             </button>
-            <motion.div 
+            <div 
               onClick={() => setProfileSettingsOpen(true)}
-              className={clsx(
-                "w-7 h-7 rounded-full border overflow-hidden relative cursor-pointer",
-                user?.role === "admin" 
-                  ? "border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.3)]" 
-                  : "border-[var(--color-primary)]/30"
-              )}
-              animate={user?.role === "admin" ? {
-                borderColor: ["rgba(245,158,11,0.5)", "rgba(245,158,11,0.8)", "rgba(245,158,11,0.5)"],
-              } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
+              className="w-7 h-7 rounded-full border border-[var(--color-primary)]/30 overflow-hidden relative cursor-pointer"
             >
               {user?.avatar ? (
                 <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
               ) : (
-                <div className={clsx(
-                  "w-full h-full flex items-center justify-center",
-                  user?.role === "admin" ? "bg-amber-500/20" : "bg-[var(--color-primary)]/20"
-                )}>
-                  <span className={clsx(
-                    "text-[11px]",
-                    user?.role === "admin" ? "text-amber-400" : "text-[var(--color-primary)]"
-                  )}>
+                <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary)]/20">
+                  <span className="text-[11px] text-[var(--color-primary)]">
                     {user?.name?.[0] || 'U'}
                   </span>
                 </div>
               )}
-              {/* Admin scanline effect */}
-              {user?.role === "admin" && (
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/10 to-transparent pointer-events-none"
-                  animate={{ y: ["-100%", "100%"] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                />
-              )}
-            </motion.div>
+            </div>
             {/* Logout Button */}
             <button
               onClick={handleLogout}

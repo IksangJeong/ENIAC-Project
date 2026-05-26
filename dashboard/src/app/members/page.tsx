@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { MemberCard, MemberDetailModal } from "@/components/dashboard";
 import { useAuthStore } from "@/stores/authStore";
+import { ProtectedRoute } from "@/components/auth";
 import { DEPARTMENTS } from "@/lib/constants";
 import { Member } from "@/types";
 import clsx from "clsx";
@@ -13,19 +14,24 @@ import clsx from "clsx";
 function MembersPageContent() {
   const searchParams = useSearchParams();
   const targetMemberId = searchParams.get("id");
-  const { user, getAllMembers } = useAuthStore();
+  const { user, getAllMembers, loadMembers, loading, members } = useAuthStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch members directory on mount
+  useEffect(() => {
+    loadMembers();
+  }, [loadMembers]);
+
   // 중앙 집중화된 멤버 리스트 사용 (user 상태 변화에 반응하도록 의존성 추가)
-  const allMembers = useMemo(() => getAllMembers(), [user, getAllMembers]);
+  const allMembers = useMemo(() => getAllMembers(), [user, getAllMembers, members]);
 
   // 딥링크 처리
   useEffect(() => {
-    if (targetMemberId) {
+    if (targetMemberId && allMembers.length > 0) {
       const member = allMembers.find(m => m.id === targetMemberId);
       if (member) {
         setSelectedMember(member);
@@ -43,6 +49,18 @@ function MembersPageContent() {
       return matchesSearch && matchesDept;
     });
   }, [allMembers, searchTerm, selectedDept]);
+
+  if (loading && allMembers.length === 0) {
+    return (
+      <PageLayout activePage="members">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+            // SCANNING_MEMBER_DATABASE...
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout activePage="members">
@@ -101,16 +119,18 @@ function MembersPageContent() {
 
 export default function MembersPage() {
   return (
-    <Suspense fallback={
-      <PageLayout activePage="members">
-        <div className="h-full flex items-center justify-center">
-          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
-            // SCANNING_MEMBER_DATABASE...
+    <ProtectedRoute>
+      <Suspense fallback={
+        <PageLayout activePage="members">
+          <div className="h-full flex items-center justify-center">
+            <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+              // SCANNING_MEMBER_DATABASE...
+            </div>
           </div>
-        </div>
-      </PageLayout>
-    }>
-      <MembersPageContent />
-    </Suspense>
+        </PageLayout>
+      }>
+        <MembersPageContent />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

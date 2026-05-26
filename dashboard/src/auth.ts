@@ -25,7 +25,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         // user.login is available because we added it in the profile() mapping above
         const identifier = (user as any).login || user.email;
-        token.role = ADMIN_IDENTIFIERS.includes(identifier) ? "admin" : "user";
+        token.role = ADMIN_IDENTIFIERS.includes(identifier) ? "admin" : "member";
         token.login = (user as any).login;
       }
       return token;

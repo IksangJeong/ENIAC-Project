@@ -7,7 +7,6 @@ import { useGroupStore } from "@/stores/groupStore";
 import { GlitchText } from "@/components/ui";
 import { MemberCard } from "./MemberCard";
 import { DEPARTMENTS, POSITION_SUGGESTIONS, DepartmentId } from "@/lib/constants";
-import { mockGroups } from "@/lib/mockData";
 import { Member } from "@/types";
 import Link from "next/link";
 import clsx from "clsx";
@@ -19,7 +18,7 @@ interface ProfileSettingsModalProps {
 
 export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalProps) {
   const { user, updateUser } = useAuthStore();
-  const { groups } = useGroupStore();
+  const { groups, loadGroups } = useGroupStore();
   
   const [formData, setFormData] = useState({
     name: "",
@@ -35,11 +34,18 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Fetch groups on mount/open
+  useEffect(() => {
+    if (isOpen) {
+      loadGroups();
+    }
+  }, [isOpen, loadGroups]);
+
   // 내가 속한 그룹 필터링
   const myGroups = useMemo(() => {
     if (!user) return [];
-    return mockGroups.filter(g => g.memberIds.includes(user.id));
-  }, [user]);
+    return groups.filter(g => g.memberIds.includes(user.id));
+  }, [user, groups]);
 
   useEffect(() => {
     if (user && isOpen) {
@@ -245,11 +251,24 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
               </div>
             </div>
 
-            <div className="p-6 border-t border-[var(--color-primary)]/20 flex justify-end gap-4 bg-black/40">
-              <button onClick={onClose} className="px-6 py-2 text-[10px] font-mono text-[var(--color-text-secondary)] uppercase hover:text-white transition-all">[DISCARD]</button>
-              <button onClick={handleSave} disabled={isSaving || showSuccess} className={clsx("px-10 py-2 text-[10px] font-mono uppercase transition-all", showSuccess ? "bg-emerald-500 text-white" : "bg-[var(--color-primary)] text-black hover:glow")}>
-                {isSaving ? "SYNCING..." : showSuccess ? "SUCCESS" : "[COMMIT_SYNC]"}
-              </button>
+            <div className="p-6 border-t border-[var(--color-primary)]/20 flex justify-between items-center bg-black/40">
+              <div>
+                {(user.clearance === "root" || user.clearance === "officer" || user.role === "admin") && (
+                  <Link 
+                    href="/admin" 
+                    onClick={onClose}
+                    className="px-4 py-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10 text-[10px] font-mono uppercase tracking-wider transition-all"
+                  >
+                    [ADMIN_PANEL]
+                  </Link>
+                )}
+              </div>
+              <div className="flex gap-4">
+                <button onClick={onClose} className="px-6 py-2 text-[10px] font-mono text-[var(--color-text-secondary)] uppercase hover:text-white transition-all">[DISCARD]</button>
+                <button onClick={handleSave} disabled={isSaving || showSuccess} className={clsx("px-10 py-2 text-[10px] font-mono uppercase transition-all", showSuccess ? "bg-emerald-500 text-white" : "bg-[var(--color-primary)] text-black hover:glow")}>
+                  {isSaving ? "SYNCING..." : showSuccess ? "SUCCESS" : "[COMMIT_SYNC]"}
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>

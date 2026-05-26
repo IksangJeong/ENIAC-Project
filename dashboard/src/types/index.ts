@@ -17,7 +17,8 @@ export interface ServerStatus {
 }
 
 // User Types
-export type UserRole = "admin" | "member" | "viewer";
+export type UserRole = "admin" | "member";
+export type ClearanceType = "root" | "officer" | "member";
 
 export interface User {
   id: string;
@@ -25,7 +26,9 @@ export interface User {
   username?: string;
   email?: string;
   avatar?: string;
-  role?: UserRole;
+  role: UserRole;
+  clearance?: ClearanceType;
+  isApproved: boolean;
   status: "online" | "offline" | "away";
   statusMessage?: string;
   metrics?: {

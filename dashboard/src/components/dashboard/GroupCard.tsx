@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Group, Member } from "@/types";
-import { mockMembers } from "@/lib/mockData";
+import { useAuthStore } from "@/stores/authStore";
 import { useMemo } from "react";
 import clsx from "clsx";
 
@@ -32,12 +32,14 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
     project: "text-blue-400 border-blue-400/30 bg-blue-400/5",
   };
 
+  const { members } = useAuthStore();
+
   // 그룹 멤버 데이터 매핑
   const groupMembers = useMemo(() => {
     return group.memberIds
-      .map(id => mockMembers.find(m => m.id === id))
+      .map(id => members.find(m => m.id === id))
       .filter(Boolean) as Member[];
-  }, [group.memberIds]);
+  }, [group.memberIds, members]);
 
   return (
     <div className="p-2 overflow-visible">

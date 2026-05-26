@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Group, GroupStatus, GroupType } from "@/types";
-import { mockGroups } from "@/lib/mockData";
+import { Group } from "@/types";
+import { fetchGroups, createGroup, updateGroup as apiUpdateGroup, deleteGroup as apiDeleteGroup } from "@/lib/api";
 
 interface GroupState {
   groups: Group[];
@@ -8,32 +8,70 @@ interface GroupState {
   error: string | null;
 
   // Actions
+  loadGroups: () => Promise<void>;
   setGroups: (groups: Group[]) => void;
-  addGroup: (group: Group) => void;
-  updateGroup: (id: string, updates: Partial<Group>) => void;
-  deleteGroup: (id: string) => void;
+  addGroup: (group: Group) => Promise<void>;
+  updateGroup: (id: string, updates: Partial<Group>) => Promise<void>;
+  deleteGroup: (id: string) => Promise<void>;
   getGroupById: (id: string) => Group | undefined;
   getGroupsByMemberId: (memberId: string) => Group[];
 }
 
 export const useGroupStore = create<GroupState>((set, get) => ({
-  groups: mockGroups,
+  groups: [],
   loading: false,
   error: null,
 
+  loadGroups: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await fetchGroups();
+      set({ groups: data, loading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
+  },
+
   setGroups: (groups) => set({ groups }),
 
-  addGroup: (group) => set((state) => ({ 
-    groups: [group, ...state.groups] 
-  })),
+  addGroup: async (group) => {
+    set({ loading: true, error: null });
+    try {
+      const savedGroup = await createGroup(group);
+      set((state) => ({ 
+        groups: [savedGroup, ...state.groups],
+        loading: false 
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
+  },
 
-  updateGroup: (id, updates) => set((state) => ({
-    groups: state.groups.map((g) => (g.id === id ? { ...g, ...updates } : g)),
-  })),
+  updateGroup: async (id, updates) => {
+    set({ loading: true, error: null });
+    try {
+      const savedGroup = await apiUpdateGroup(id, updates);
+      set((state) => ({
+        groups: state.groups.map((g) => (g.id === id ? savedGroup : g)),
+        loading: false,
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
+  },
 
-  deleteGroup: (id) => set((state) => ({
-    groups: state.groups.filter((g) => g.id !== id),
-  })),
+  deleteGroup: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      await apiDeleteGroup(id);
+      set((state) => ({
+        groups: state.groups.filter((g) => g.id !== id),
+        loading: false,
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, loading: false });
+    }
+  },
 
   getGroupById: (id) => get().groups.find((g) => g.id === id),
 

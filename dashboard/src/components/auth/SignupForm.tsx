@@ -18,6 +18,8 @@ export function SignupForm() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -75,6 +77,7 @@ export function SignupForm() {
                 value={(formData as any)[field.name]}
                 onChange={handleChange}
                 placeholder={field.placeholder}
+                autoFocus={field.name === "username"}
                 className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
                 required
               />
@@ -96,23 +99,49 @@ export function SignupForm() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-          {[
-            { label: "04_KEY", name: "password", type: "password", placeholder: "********" },
-            { label: "05_VERIFY", name: "confirmPassword", type: "password", placeholder: "********" },
-          ].map((field) => (
-            <div key={field.name} className="space-y-1">
-              <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[{field.label}]</label>
-              <input
-                type={field.type}
-                name={field.name}
-                value={(formData as any)[field.name]}
-                onChange={handleChange}
-                placeholder={field.placeholder}
-                className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+          <div className="space-y-1">
+            <div className="flex justify-between items-center px-0.5">
+              <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[04_KEY]</label>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors underline underline-offset-2 opacity-60 hover:opacity-100 uppercase text-[8px]"
+              >
+                {showPassword ? "[CONCEAL]" : "[REVEAL]"}
+              </button>
             </div>
-          ))}
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder={showPassword ? "ENTER_KEY" : "********"}
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between items-center px-0.5">
+              <label className="text-[8px] text-[var(--color-primary)] uppercase font-bold opacity-70">[05_VERIFY]</label>
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors underline underline-offset-2 opacity-60 hover:opacity-100 uppercase text-[8px]"
+              >
+                {showConfirmPassword ? "[CONCEAL]" : "[REVEAL]"}
+              </button>
+            </div>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder={showConfirmPassword ? "VERIFY_KEY" : "********"}
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              required
+            />
+          </div>
         </div>
 
         <AnimatePresence>

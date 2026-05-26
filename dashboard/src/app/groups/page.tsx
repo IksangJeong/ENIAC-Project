@@ -7,14 +7,19 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { GroupCard, GroupDetailModal, GroupCreateModal } from "@/components/dashboard";
 import { useGroupStore } from "@/stores/groupStore";
 import { useAuthStore } from "@/stores/authStore";
+import { ProtectedRoute } from "@/components/auth";
 import { Group } from "@/types";
 import clsx from "clsx";
 
 function GroupsPageContent() {
-  const { groups } = useGroupStore();
+  const { groups, loading, loadGroups } = useGroupStore();
   const { user } = useAuthStore();
   const searchParams = useSearchParams();
   const targetGroupId = searchParams.get("id");
+  
+  useEffect(() => {
+    loadGroups();
+  }, [loadGroups]);
   
   const [filter, setFilter] = useState<"all" | "project" | "study">("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,7 +50,17 @@ function GroupsPageContent() {
     setIsDetailModalOpen(true);
   };
 
-  const isAdmin = user?.role === "admin";
+  if (loading && groups.length === 0) {
+    return (
+      <PageLayout activePage="groups">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+            // INITIALIZING_CLUSTER_INTERFACE...
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout activePage="groups">
@@ -54,14 +69,6 @@ function GroupsPageContent() {
           <div>
             <h1 className="text-3xl font-black text-[var(--color-primary)] tracking-tighter uppercase mb-1 flex items-center gap-3">
               Sub_Clusters
-              {isAdmin && (
-                <button 
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="text-[10px] font-mono text-amber-500 border border-amber-500/50 px-2 py-1 bg-amber-500/10 hover:bg-amber-500 hover:text-black transition-all hidden sm:block"
-                >
-                  + INITIALIZE_NEW_CLUSTER
-                </button>
-              )}
             </h1>
             <p className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-[0.3em] font-mono">
               // ACTIVE_PROJECTS_AND_STUDY_GROUPS
@@ -140,16 +147,18 @@ function GroupsPageContent() {
 
 export default function GroupsPage() {
   return (
-    <Suspense fallback={
-      <PageLayout activePage="groups">
-        <div className="h-full flex items-center justify-center">
-          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
-            // INITIALIZING_CLUSTER_INTERFACE...
+    <ProtectedRoute>
+      <Suspense fallback={
+        <PageLayout activePage="groups">
+          <div className="h-full flex items-center justify-center">
+            <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+              // INITIALIZING_CLUSTER_INTERFACE...
+            </div>
           </div>
-        </div>
-      </PageLayout>
-    }>
-      <GroupsPageContent />
-    </Suspense>
+        </PageLayout>
+      }>
+        <GroupsPageContent />
+      </Suspense>
+    </ProtectedRoute>
   );
 }
