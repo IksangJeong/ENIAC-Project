@@ -17,6 +17,7 @@ export function SignupForm() {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -48,13 +49,56 @@ export function SignupForm() {
         throw new Error(data.message || "INITIALIZATION_FAILED: Registration error");
       }
 
-      router.push("/auth/login?registered=true");
+      setIsSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "SYSTEM_FAILURE: Could not create node");
     } finally {
       setLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="space-y-6 font-mono w-full max-w-md mx-auto text-center border border-[var(--color-primary)]/30 bg-black/60 p-6 rounded-sm relative"
+      >
+        <div className="absolute inset-0 pointer-events-none scanline opacity-10" />
+        
+        <div className="w-16 h-16 border border-emerald-500 flex items-center justify-center text-emerald-500 mx-auto text-3xl font-black rounded-sm animate-pulse mb-4">
+          ✓
+        </div>
+
+        <div className="space-y-1">
+          <GlitchText text="NODE_INITIALIZED" as="h2" className="text-2xl font-black tracking-tighter text-emerald-400" />
+          <p className="text-[10px] text-[var(--color-primary)]/60 uppercase tracking-[0.2em]">Deployment Request Registered</p>
+        </div>
+
+        <div className="p-4 bg-black/40 border border-[var(--color-primary)]/10 text-left text-xs space-y-3 leading-relaxed">
+          <p className="text-emerald-500 font-bold tracking-wider">// STATUS: PENDING_ROOT_ACTIVATION</p>
+          <p className="text-neutral-300">
+            Your user identity <span className="text-[var(--color-primary)]">@{formData.username}</span> has been broadcast to the cluster database. 
+          </p>
+          <p className="text-neutral-300">
+            For security clearance, a <strong>Root Dev Admin</strong> or <strong>Club Officer</strong> must authorize your connection link before network access is granted.
+          </p>
+        </div>
+
+        <div className="pt-2">
+          <Link
+            href="/auth/login"
+            className={clsx(
+              "block w-full text-center bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all",
+              "hover:glow active:scale-95"
+            )}
+          >
+            RETURN_TO_GATEWAY
+          </Link>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <div className="space-y-6 font-mono w-full max-w-md mx-auto">
@@ -78,7 +122,7 @@ export function SignupForm() {
                 onChange={handleChange}
                 placeholder={field.placeholder}
                 autoFocus={field.name === "username"}
-                className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
                 required
               />
             </div>
@@ -93,7 +137,7 @@ export function SignupForm() {
             value={formData.email}
             onChange={handleChange}
             placeholder="EMAIL@ENIAC.COM"
-            className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+            className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
             required
           />
         </div>
@@ -116,7 +160,7 @@ export function SignupForm() {
               value={formData.password}
               onChange={handleChange}
               placeholder={showPassword ? "ENTER_KEY" : "********"}
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>
@@ -138,7 +182,7 @@ export function SignupForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder={showConfirmPassword ? "VERIFY_KEY" : "********"}
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>

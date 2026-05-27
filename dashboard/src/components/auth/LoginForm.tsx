@@ -14,6 +14,7 @@ export function LoginForm() {
   const { setUser } = useAuthStore();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState("");
   const [githubLoading, setGithubLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,22 @@ export function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    const steps = [
+      "DIALING_HOST_GATEWAY...",
+      "EXCHANGING_CRYPT_KEYS...",
+      "VERIFYING_CREDENTIALS...",
+      "ESTABLISHING_LINK..."
+    ];
+
+    let currentStep = 0;
+    setLoadingStep(steps[0]);
+    const interval = setInterval(() => {
+      currentStep++;
+      if (currentStep < steps.length) {
+        setLoadingStep(steps[currentStep]);
+      }
+    }, 350);
 
     try {
       const response = await fetch("/api/auth/login", {
@@ -46,12 +63,16 @@ export function LoginForm() {
       }
 
       setUser(data.user);
+      setLoadingStep("CONNECTION_SECURE");
+      await new Promise((resolve) => setTimeout(resolve, 300));
       router.push("/");
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "CONNECTION_FAILED";
       setError(errorMessage);
     } finally {
+      clearInterval(interval);
       setLoading(false);
+      setLoadingStep("");
     }
   };
 
@@ -84,7 +105,7 @@ export function LoginForm() {
               onChange={handleChange}
               placeholder="ENTER_IDENTIFIER"
               autoFocus
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>
@@ -111,7 +132,7 @@ export function LoginForm() {
               value={formData.password}
               onChange={handleChange}
               placeholder={showPassword ? "ENTER_CRYPT_KEY" : "••••••••"}
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-0 py-1.5 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] transition-all"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>
@@ -145,11 +166,16 @@ export function LoginForm() {
           type="submit"
           disabled={loading || githubLoading}
           className={clsx(
-            "w-full bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all",
+            "w-full bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all relative overflow-hidden",
             "hover:glow active:scale-95 disabled:opacity-50"
           )}
         >
-          {loading ? "SYNCING..." : "ESTABLISH_CONNECTION"}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-1.5 h-1.5 bg-black rounded-full animate-ping" />
+              {loadingStep}
+            </span>
+          ) : "ESTABLISH_CONNECTION"}
         </motion.button>
       </form>
 

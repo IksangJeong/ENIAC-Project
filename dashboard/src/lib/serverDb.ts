@@ -11,6 +11,9 @@ export interface ServerUser {
   clearance: ClearanceType;
   isApproved: boolean;
   avatar?: string;
+  resetRequested?: boolean;
+  resetRequestReason?: string;
+  resetRequestedAt?: string;
 }
 
 const globalForDb = global as unknown as {

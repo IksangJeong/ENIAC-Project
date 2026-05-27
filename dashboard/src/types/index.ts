@@ -36,6 +36,9 @@ export interface User {
     weeklyActivity: number[]; // Array of commit counts for last 7 days
   };
   lastSeen?: string;
+  resetRequested?: boolean;
+  resetRequestReason?: string;
+  resetRequestedAt?: string;
 }
 
 // Member Types (Extended from User for the Members Page)
