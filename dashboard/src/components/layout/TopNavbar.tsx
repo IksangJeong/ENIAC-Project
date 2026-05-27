@@ -40,8 +40,16 @@ export function TopNavbar({
   const router = useRouter();
   const { user, logout, setProfileSettingsOpen } = useAuthStore();
 
+  // Dynamically build nav links based on user clearance
+  const visibleNavLinks = [
+    ...navLinks,
+    ...(user?.clearance === "root" || user?.clearance === "officer"
+      ? [{ id: "admin", label: "Admin", href: "/admin" }]
+      : [])
+  ];
+
   // Determine active page from pathname or prop
-  const currentPage = activePage || navLinks.find(link => link.href === pathname)?.id || "dashboard";
+  const currentPage = activePage || visibleNavLinks.find(link => link.href === pathname)?.id || "dashboard";
 
   const handleLogout = async () => {
     // 1. NextAuth 세션 종료 (GitHub 등)
@@ -98,7 +106,7 @@ export function TopNavbar({
 
         {/* Desktop Nav Links */}
         <div className="hidden lg:flex items-center gap-6 xl:gap-8">
-          {navLinks.map((link) => (
+          {visibleNavLinks.map((link) => (
             <Link
               key={link.id}
               href={link.href}
@@ -211,7 +219,7 @@ export function TopNavbar({
             className="lg:hidden absolute left-0 right-0 top-14 bg-[var(--color-bg-black)]/95 backdrop-blur-md border-b border-[var(--color-primary)]/20"
           >
             <div className="flex flex-col py-2">
-              {navLinks.map((link) => (
+              {visibleNavLinks.map((link) => (
                 <Link
                   key={link.id}
                   href={link.href}

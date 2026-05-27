@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { serverUsers } from "@/lib/serverDb";
+import { serverUsers, serverMembers } from "@/lib/serverDb";
+import { Member } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,6 +61,26 @@ export async function POST(request: NextRequest) {
     };
 
     serverUsers.push(newUser);
+
+    // Also register them in serverMembers so they show up in NodeRegistry (Pending Approvals)
+    const newMember: Member = {
+      id: newUser.id,
+      name: newUser.name,
+      username: newUser.username,
+      status: "offline",
+      statusMessage: "Awaiting administrator activation.",
+      avatar: "",
+      role: newUser.role,
+      clearance: newUser.clearance,
+      isApproved: false,
+      position: "Pending Node",
+      department: "Management", // Default department
+      bio: "Awaiting verification.",
+      skills: [],
+      socialLinks: { github: newUser.username },
+      joinDate: new Date().toISOString().split("T")[0],
+    };
+    serverMembers.push(newMember);
 
     return NextResponse.json(
       {

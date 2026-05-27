@@ -52,6 +52,16 @@ export const serverUsers: ServerUser[] = globalForDb.serverUsers || [
     clearance: "member",
     isApproved: true,
   },
+  {
+    id: "user-id-2",
+    username: "user-2",
+    name: "Regular User 2",
+    email: "user-2@example.com",
+    password: "user123",
+    role: "member",
+    clearance: "member",
+    isApproved: false,
+  },
   ...mockMembers.map((m) => ({
     id: m.id,
     username: m.username || m.name,
@@ -59,7 +69,7 @@ export const serverUsers: ServerUser[] = globalForDb.serverUsers || [
     email: m.email || `${m.username || m.id}@eniac.com`,
     role: (m.role === "admin" ? "admin" : "member") as "admin" | "member",
     clearance: (m.role === "admin" ? "root" : "member") as ClearanceType,
-    isApproved: true,
+    isApproved: m.isApproved !== undefined ? m.isApproved : true,
     avatar: m.avatar,
   })),
 ];

@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   getAllMembers: () => {
-    return get().members;
+    return get().members.filter((m) => m.isApproved);
   },
 
   loadMembers: async () => {

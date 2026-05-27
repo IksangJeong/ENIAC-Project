@@ -50,7 +50,7 @@ function AdminPageContent() {
   ];
 
   return (
-    <PageLayout activePage="dashboard">
+    <PageLayout activePage="admin">
       <div className="max-w-6xl mx-auto space-y-8 pb-20 font-mono">
         
         {/* Header */}
