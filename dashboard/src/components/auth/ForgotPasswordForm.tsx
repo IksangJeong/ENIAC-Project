@@ -45,7 +45,7 @@ export function ForgotPasswordForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="space-y-6 font-mono w-full max-w-sm mx-auto text-center border border-emerald-500/30 bg-black/60 p-6 rounded-sm relative"
+        className="space-y-6 font-mono w-full max-w-sm mx-auto text-center border border-emerald-500/20 bg-black/40 backdrop-blur-sm p-8 rounded-sm relative"
       >
         <div className="absolute inset-0 pointer-events-none scanline opacity-10" />
 
@@ -60,7 +60,7 @@ export function ForgotPasswordForm() {
         </div>
 
         <div className="p-4 bg-black/40 border border-emerald-500/10 text-left text-xs space-y-3 leading-relaxed">
-          <p className="text-emerald-400 font-bold tracking-wider">// RECOVERY CODE: PENDING_ROOT_DECIDION</p>
+          <p className="text-emerald-400 font-bold tracking-wider">// RECOVERY CODE: PENDING_ROOT_DECISION</p>
           <p className="text-neutral-300">
             A secure recovery signal for node <span className="text-[var(--color-primary)]">@{username}</span> has been dispatched to the master console registry.
           </p>
@@ -73,7 +73,7 @@ export function ForgotPasswordForm() {
           <Link
             href="/auth/login"
             className={clsx(
-              "block w-full text-center bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all",
+              "block w-full text-center bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all relative overflow-hidden",
               "hover:glow active:scale-95"
             )}
           >
@@ -86,9 +86,12 @@ export function ForgotPasswordForm() {
 
   return (
     <div className="space-y-6 font-mono w-full max-w-sm mx-auto">
-      <div className="space-y-1">
-        <GlitchText text="RECOVER_ACCESS" as="h2" className="text-2xl font-black tracking-tighter text-[var(--color-primary)]" />
-        <p className="text-[9px] text-[var(--color-text-secondary)] uppercase tracking-[0.2em]">Initiating key recovery sequence</p>
+      <div className="space-y-2 mb-4">
+        <div className="text-[var(--color-primary)]/60 text-[10px] font-mono tracking-[0.3em] uppercase">
+          &gt; PASSWORD_RECOVERY
+        </div>
+        <GlitchText text="FORGOT_PASSWORD" as="h1" className="text-4xl font-black tracking-tighter text-[var(--color-primary)]" />
+        <div className="w-12 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent"></div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -162,7 +165,7 @@ export function ForgotPasswordForm() {
           type="submit"
           disabled={loading}
           className={clsx(
-            "w-full bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all",
+            "w-full bg-[var(--color-primary)] text-black font-black py-3 text-[11px] uppercase tracking-[0.3em] transition-all relative overflow-hidden",
             "hover:glow active:scale-95 disabled:opacity-50"
           )}
         >

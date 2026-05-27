@@ -11,6 +11,7 @@
   --color-primary-b: 209;
   --color-primary: rgb(var(--color-primary-r), var(--color-primary-g), var(--color-primary-b));
   --color-primary-hex: #aacfd1;
+  --color-primary-rgb: var(--color-primary-r), var(--color-primary-g), var(--color-primary-b);
 
   /* Background Colors */
   --color-bg-black: #05080d;
@@ -768,4 +769,16 @@ body::before {
 
 .kiosk-mode .hide-in-kiosk {
   display: none !important;
+}
+
+/* ============================================
+   Input Autofill Override
+   ============================================ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-bg-black) inset !important;
+  -webkit-text-fill-color: var(--color-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }

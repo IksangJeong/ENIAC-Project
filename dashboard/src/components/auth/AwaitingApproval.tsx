@@ -104,11 +104,13 @@ export function AwaitingApproval() {
   return (
     <div className="h-screen w-full bg-[var(--color-bg-black)] text-[var(--color-primary)] font-mono relative overflow-hidden flex flex-col p-4 md:p-8 select-none">
       {/* Background CRT scanline and noise effects */}
-      <div className="absolute inset-0 pointer-events-none scanline z-[60] opacity-10" />
+      <div className="absolute inset-0 pointer-events-none scanline z-[60] opacity-[0.15]" />
       <div className="absolute inset-0 pointer-events-none opacity-[0.01] z-[55] bg-[url('https://res.cloudinary.com/djne76asw/image/upload/v1624442144/noise_vv6vsm.png')]" />
 
       {/* Grid cyber mesh background */}
-      <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <div className="absolute inset-0 opacity-[0.05]" 
+           style={{ backgroundImage: `linear-gradient(var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)`, 
+                    backgroundSize: '100px 100px' }} />
 
       <header className="flex justify-between items-center border-b border-[var(--color-primary)]/20 pb-4 relative z-10">
         <div className="flex items-center gap-3">

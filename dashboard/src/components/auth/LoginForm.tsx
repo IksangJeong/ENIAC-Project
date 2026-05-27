@@ -87,10 +87,13 @@ export function LoginForm() {
   };
 
   return (
-    <div className="space-y-5 font-mono w-full max-w-sm mx-auto">
-      <div className="space-y-1">
-        <GlitchText text="LOGIN_SESSION" as="h2" className="text-2xl font-black tracking-tighter text-[var(--color-primary)]" />
-        <p className="text-[9px] text-[var(--color-text-secondary)] uppercase tracking-[0.2em]">Verification required for access</p>
+    <div className="space-y-6 font-mono w-full max-w-sm mx-auto">
+      <div className="space-y-2 mb-4">
+        <div className="text-[var(--color-primary)]/60 text-[10px] font-mono tracking-[0.3em] uppercase">
+          &gt; SYSTEM_AUTHENTICATION
+        </div>
+        <GlitchText text="LOGIN" as="h1" className="text-4xl font-black tracking-tighter text-[var(--color-primary)]" />
+        <div className="w-12 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent"></div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,7 +108,7 @@ export function LoginForm() {
               onChange={handleChange}
               placeholder="ENTER_IDENTIFIER"
               autoFocus
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>
@@ -132,7 +135,7 @@ export function LoginForm() {
               value={formData.password}
               onChange={handleChange}
               placeholder={showPassword ? "ENTER_CRYPT_KEY" : "••••••••"}
-              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-base text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
+              className="w-full bg-black/20 border-b border-[var(--color-primary)]/20 px-3 py-2 text-sm text-white placeholder-[var(--color-primary)]/10 focus:outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-primary)]/[0.02] focus:shadow-[0_1px_15px_rgba(var(--color-primary-rgb),0.15)] transition-all rounded-sm"
               required
             />
           </div>
