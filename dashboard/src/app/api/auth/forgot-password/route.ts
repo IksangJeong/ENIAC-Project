@@ -22,30 +22,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by username and email in the memory database
+    // Find user by username in the memory database
     const user = serverUsers.find(
-      (u) =>
-        u.username.toLowerCase() === username.toLowerCase() &&
-        u.email.toLowerCase() === email.toLowerCase()
+      (u) => u.username.toLowerCase() === username.toLowerCase()
     );
 
-    if (user) {
-      // Mark as recovery requested in both serverUsers and serverMembers
-      const timestamp = new Date().toISOString();
-      const requestReason = reason || "No reason provided.";
+    if (!user) {
+      return NextResponse.json(
+        { message: "INVALID_NODE: The requested Node Identifier could not be located in the central registry." },
+        { status: 404 }
+      );
+    }
 
-      user.resetRequested = true;
-      user.resetRequestReason = requestReason;
-      user.resetRequestedAt = timestamp;
+    // Verify email matches the user record
+    if (user.email.toLowerCase() !== email.toLowerCase()) {
+      return NextResponse.json(
+        { message: "IDENTITY_MISMATCH: The provided communication address does not match the registered coordinates for this Node." },
+        { status: 400 }
+      );
+    }
+
+    // Mark as recovery requested in both serverUsers and serverMembers
+    const timestamp = new Date().toISOString();
+    const requestReason = reason || "No reason provided.";
+
+    user.resetRequested = true;
+    user.resetRequestReason = requestReason;
+    user.resetRequestedAt = timestamp;
 
       // Update the member registry too (so the store/admin panel gets it)
-      const member = serverMembers.find((m) => m.id === user.id);
-      if (member) {
-        member.resetRequested = true;
-        member.resetRequestReason = requestReason;
-        member.resetRequestedAt = timestamp;
+      let member = serverMembers.find((m) => m.id === user.id);
+      if (!member) {
+        // Dynamically create member if not present in the directory
+        member = {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          status: "offline",
+          statusMessage: "Access recovery requested.",
+          avatar: user.avatar || "",
+          role: user.role,
+          clearance: user.clearance,
+          isApproved: user.isApproved,
+          position: "System User",
+          department: "Management",
+          bio: "Registered user node.",
+          skills: [],
+          socialLinks: { github: user.username },
+          joinDate: new Date().toISOString().split("T")[0],
+        };
+        serverMembers.push(member);
       }
-    }
+      
+      member.resetRequested = true;
+      member.resetRequestReason = requestReason;
+      member.resetRequestedAt = timestamp;
 
     // Always return success for security (preventing username harvesting)
     // but with descriptive response details matching HUD theme
