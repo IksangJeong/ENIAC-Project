@@ -6,11 +6,10 @@ import { ProtectedRoute } from "@/components/auth";
 import { MemberDetailModal } from "@/components/dashboard";
 import { useScheduleStore } from "@/stores/scheduleStore";
 import { useAuthStore } from "@/stores/authStore";
-import { mockMembers } from "@/lib/mockData";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Member } from "@/types";
 import Link from "next/link";
 import clsx from "clsx";
@@ -18,47 +17,38 @@ import clsx from "clsx";
 export default function ScheduleDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getScheduleById } = useScheduleStore();
-  const { user: currentUser } = useAuthStore();
+  const { getScheduleById, loadSchedules, loading: scheduleLoading } = useScheduleStore();
+  const { user: currentUser, members, loadMembers, loading: memberLoading } = useAuthStore();
+  
+  useEffect(() => {
+    loadSchedules();
+    loadMembers();
+  }, [loadSchedules, loadMembers]);
+
   const schedule = getScheduleById(params.id as string);
 
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // MembersPage와 동일한 멤버 데이터 병합 로직
-  const allMembers = useMemo(() => {
-    let list = [...mockMembers];
-    if (currentUser) {
-      const existingIndex = list.findIndex(m => m.id === currentUser.id);
-      const githubId = currentUser.socialLinks?.github || currentUser.username;
-      const myNode: Member = {
-        ...currentUser,
-        id: currentUser.id,
-        name: currentUser.name || "Unknown Member",
-        username: currentUser.username || "guest",
-        avatar: currentUser.avatar || "",
-        status: "online",
-        statusMessage: currentUser.statusMessage || "Active in cluster",
-        role: currentUser.role || "member",
-        position: currentUser.position || "Club Member",
-        department: currentUser.department || "Management",
-        bio: currentUser.bio || "No biography available.",
-        skills: currentUser.skills || [],
-        socialLinks: { ...currentUser.socialLinks, github: githubId },
-        joinDate: currentUser.joinDate || new Date().toISOString().split('T')[0]
-      } as Member;
-
-      if (existingIndex !== -1) list[existingIndex] = myNode;
-      else list = [myNode, ...list];
-    }
-    return list;
-  }, [currentUser]);
-
   // 이 일정에 참여 중인 멤버 필터링
   const participatingNodes = useMemo(() => {
     if (!schedule?.participantIds) return [];
-    return allMembers.filter(m => schedule.participantIds?.includes(m.id));
-  }, [schedule, allMembers]);
+    return members.filter(m => schedule.participantIds?.includes(m.id));
+  }, [schedule, members]);
+
+  if ((scheduleLoading || memberLoading) && !schedule) {
+    return (
+      <ProtectedRoute>
+        <PageLayout activePage="schedule">
+          <div className="flex flex-col items-center justify-center h-[60vh] font-mono">
+            <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+              // SYNCING_OPERATION_DEBRIEFING...
+            </div>
+          </div>
+        </PageLayout>
+      </ProtectedRoute>
+    );
+  }
 
   if (!schedule) {
     return (
@@ -208,16 +198,6 @@ export default function ScheduleDetailPage() {
                      <p className="flex gap-2"><span className="text-amber-500">[WARN]</span> ENCRYPTION_LAYER_3_EXPIRED</p>
                      <p className="flex gap-2"><span className="text-[var(--color-primary)]">[OK]</span> DEBRIEFING_UI_LOADED</p>
                   </div>
-               </div>
-
-               <div className="border border-amber-500/20 bg-amber-500/5 p-4 rounded-sm space-y-3">
-                  <h3 className="text-[10px] font-mono uppercase tracking-[0.3em] text-amber-500/70">AUTHORIZED_COMMANDS</h3>
-                  <button className="w-full py-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10 text-[9px] uppercase tracking-widest transition-all">
-                    REQUEST_EDIT_ACCESS
-                  </button>
-                  <button className="w-full py-2 border border-red-500/30 text-red-500 hover:bg-red-500/10 text-[9px] uppercase tracking-widest transition-all">
-                    TERMINATE_OPERATION
-                  </button>
                </div>
             </div>
           </div>

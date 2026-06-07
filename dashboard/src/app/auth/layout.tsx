@@ -67,7 +67,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   }, [mouseX, mouseY, displayText, isDeleting, sentenceIndex, typingSpeed]);
 
   return (
-    <div className="min-h-screen w-full bg-[#030303] relative overflow-hidden font-mono flex flex-col custom-scrollbar select-none text-[var(--color-primary)]">
+    <div className="min-h-screen w-full bg-[var(--color-bg-black)] relative overflow-hidden font-mono flex flex-col custom-scrollbar select-none text-[var(--color-primary)]">
       
       {/* 1. LAYER: INTERACTIVE GLOW */}
       <motion.div 

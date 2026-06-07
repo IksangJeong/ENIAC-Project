@@ -7,7 +7,7 @@ import { ProfileSettingsModal } from "@/components/dashboard";
 import { useAuthStore } from "@/stores/authStore";
 import clsx from "clsx";
 
-export type PageType = "dashboard" | "members" | "schedule" | "github" | "algorithm" | "groups";
+export type PageType = "dashboard" | "members" | "schedule" | "github" | "algorithm" | "groups" | "admin";
 
 interface PageLayoutProps {
   children: React.ReactNode;

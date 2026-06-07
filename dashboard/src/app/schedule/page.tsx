@@ -4,7 +4,6 @@ import { PageLayout } from "@/components/layout";
 import { ProtectedRoute } from "@/components/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScheduleCard } from "@/components/modules/schedule/ScheduleCard";
-import { AdminTerminal } from "@/components/modules/schedule/AdminTerminal";
 import { ScheduleModal } from "@/components/modules/schedule/ScheduleModal";
 import { useScheduleStore } from "@/stores/scheduleStore";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -12,7 +11,12 @@ import { Schedule } from "@/types";
 import clsx from "clsx";
 
 export default function SchedulePage() {
-  const { schedules, addSchedule, updateSchedule, deleteSchedule } = useScheduleStore();
+  const { schedules, loading, loadSchedules, addSchedule, updateSchedule, deleteSchedule } = useScheduleStore();
+  
+  useEffect(() => {
+    loadSchedules();
+  }, [loadSchedules]);
+
   const [newScheduleIds, setNewScheduleIds] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,6 +66,18 @@ export default function SchedulePage() {
   const filteredSchedules = schedules
     .filter(s => filter === "all" || s.type === filter)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  if (loading && schedules.length === 0) {
+    return (
+      <PageLayout activePage="schedule">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-[var(--color-primary)] font-mono animate-pulse uppercase tracking-[0.3em]">
+            // RECONSTRUCTING_TIMELINE_DATABASE...
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <ProtectedRoute>
@@ -195,8 +211,7 @@ export default function SchedulePage() {
           </div>
         </div>
 
-        <AdminTerminal onOpenModal={() => { setEditingSchedule(null); setIsModalOpen(true); }} />
-        
+
         <ScheduleModal 
           isOpen={isModalOpen} 
           onClose={() => { setIsModalOpen(false); setEditingSchedule(null); }} 

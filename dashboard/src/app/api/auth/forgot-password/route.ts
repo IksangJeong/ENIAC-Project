@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { serverUsers, serverMembers } from "@/lib/serverDb";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { username, email, reason } = await request.json();
 
     // Validation
-    if (!email) {
+    if (!email || !username) {
       return NextResponse.json(
-        { message: "Email is required" },
+        { message: "Node ID (username) and email are required" },
         { status: 400 }
       );
     }
@@ -21,22 +22,74 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production:
-    // - Find user by email in database
-    // - Generate reset token
-    // - Send email with reset link
-    // - Save token with expiration (e.g., 1 hour)
+    // Find user by username in the memory database
+    const user = serverUsers.find(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
 
-    // For now, just return success (don't reveal if email exists for security)
+    if (!user) {
+      return NextResponse.json(
+        { message: "INVALID_NODE: The requested Node Identifier could not be located in the central registry." },
+        { status: 404 }
+      );
+    }
+
+    // Verify email matches the user record
+    if (user.email.toLowerCase() !== email.toLowerCase()) {
+      return NextResponse.json(
+        { message: "IDENTITY_MISMATCH: The provided communication address does not match the registered coordinates for this Node." },
+        { status: 400 }
+      );
+    }
+
+    // Mark as recovery requested in both serverUsers and serverMembers
+    const timestamp = new Date().toISOString();
+    const requestReason = reason || "No reason provided.";
+
+    user.resetRequested = true;
+    user.resetRequestReason = requestReason;
+    user.resetRequestedAt = timestamp;
+
+      // Update the member registry too (so the store/admin panel gets it)
+      let member = serverMembers.find((m) => m.id === user.id);
+      if (!member) {
+        // Dynamically create member if not present in the directory
+        member = {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          status: "offline",
+          statusMessage: "Access recovery requested.",
+          avatar: user.avatar || "",
+          role: user.role,
+          clearance: user.clearance,
+          isApproved: user.isApproved,
+          position: "System User",
+          department: "Management",
+          bio: "Registered user node.",
+          skills: [],
+          socialLinks: { github: user.username },
+          joinDate: new Date().toISOString().split("T")[0],
+        };
+        serverMembers.push(member);
+      }
+      
+      member.resetRequested = true;
+      member.resetRequestReason = requestReason;
+      member.resetRequestedAt = timestamp;
+
+    // Always return success for security (preventing username harvesting)
+    // but with descriptive response details matching HUD theme
     return NextResponse.json(
       {
-        message: "If an account exists with this email, you will receive a password reset link shortly.",
+        message: "RECOVERY_SIGNAL_BROADCAST_COMPLETE: Recovery signal has been sent to the admin node cluster.",
       },
       { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: "An error occurred during password reset request" },
+      { message: "SYSTEM_ERROR: Could not broadcast access key recovery signal" },
       { status: 500 }
     );
   }

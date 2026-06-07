@@ -1,24 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Mock user database - In production, use a real database
-const mockUsers: any[] = [
-  {
-    id: "3",
-    username: "admin",
-    name: "Admin User",
-    email: "admin@example.com",
-    password: "admin123",
-    role: "admin",
-  },
-  {
-    id: "4",
-    username: "user",
-    name: "Regular User",
-    email: "user@example.com",
-    password: "user123",
-    role: "user",
-  },
-];
+import { serverUsers } from "@/lib/serverDb";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,9 +13,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user - In production, query database
-    const user = mockUsers.find(
-      (u) => u.username === username && u.password === password
+    // Find user in server database
+    const user = serverUsers.find(
+      (u) => 
+        (u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === username.toLowerCase()) && 
+        u.password === password
     );
 
     if (!user) {
@@ -53,6 +36,9 @@ export async function POST(request: NextRequest) {
           name: user.name,
           email: user.email,
           role: user.role,
+          clearance: user.clearance,
+          isApproved: user.isApproved,
+          avatar: user.avatar,
         },
       },
       { status: 200 }

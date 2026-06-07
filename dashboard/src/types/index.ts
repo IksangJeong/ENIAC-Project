@@ -17,7 +17,8 @@ export interface ServerStatus {
 }
 
 // User Types
-export type UserRole = "admin" | "member" | "viewer";
+export type UserRole = "admin" | "member";
+export type ClearanceType = "root" | "officer" | "member";
 
 export interface User {
   id: string;
@@ -25,7 +26,9 @@ export interface User {
   username?: string;
   email?: string;
   avatar?: string;
-  role?: UserRole;
+  role: UserRole;
+  clearance?: ClearanceType;
+  isApproved: boolean;
   status: "online" | "offline" | "away";
   statusMessage?: string;
   metrics?: {
@@ -33,6 +36,9 @@ export interface User {
     weeklyActivity: number[]; // Array of commit counts for last 7 days
   };
   lastSeen?: string;
+  resetRequested?: boolean;
+  resetRequestReason?: string;
+  resetRequestedAt?: string;
 }
 
 // Member Types (Extended from User for the Members Page)

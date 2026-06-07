@@ -3,9 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Group, Member, GroupStatus } from "@/types";
 import { GlitchText } from "@/components/ui";
-import { mockSchedules } from "@/lib/mockData";
 import { useAuthStore } from "@/stores/authStore";
 import { useGroupStore } from "@/stores/groupStore";
+import { useScheduleStore } from "@/stores/scheduleStore";
 import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import clsx from "clsx";
@@ -19,6 +19,13 @@ interface GroupDetailModalProps {
 export function GroupDetailModal({ group, isOpen, onClose }: GroupDetailModalProps) {
   const { user, getAllMembers } = useAuthStore();
   const { updateGroup } = useGroupStore();
+  const { schedules, loadSchedules } = useScheduleStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      loadSchedules();
+    }
+  }, [isOpen, loadSchedules]);
   
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [editGoalValue, setEditGoalValue] = useState("");
@@ -45,8 +52,8 @@ export function GroupDetailModal({ group, isOpen, onClose }: GroupDetailModalPro
 
   const groupSchedules = useMemo(() => {
     if (!group) return [];
-    return mockSchedules.filter(s => s.groupId === group.id);
-  }, [group]);
+    return schedules.filter(s => s.groupId === group.id);
+  }, [group, schedules]);
 
   const leader = useMemo(() => {
     return groupMembers.find(m => m.id === group?.leaderId);
@@ -54,7 +61,7 @@ export function GroupDetailModal({ group, isOpen, onClose }: GroupDetailModalPro
 
   if (!group) return null;
 
-  const hasEditPermission = user?.role === "admin" || user?.id === group.leaderId;
+  const hasEditPermission = user?.id === group.leaderId;
 
   const statusColors = {
     booting: "text-amber-400 border-amber-400 bg-amber-400/5",

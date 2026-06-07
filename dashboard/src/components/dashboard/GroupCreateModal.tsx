@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GlitchText } from "@/components/ui";
 import { useGroupStore } from "@/stores/groupStore";
-import { mockMembers } from "@/lib/mockData";
+import { useAuthStore } from "@/stores/authStore";
 import { Group, GroupType } from "@/types";
 import clsx from "clsx";
 
@@ -15,6 +15,14 @@ interface GroupCreateModalProps {
 
 export function GroupCreateModal({ isOpen, onClose }: GroupCreateModalProps) {
   const { addGroup } = useGroupStore();
+  const { members, loadMembers } = useAuthStore();
+  
+  useEffect(() => {
+    if (isOpen) {
+      loadMembers();
+    }
+  }, [isOpen, loadMembers]);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -140,7 +148,7 @@ export function GroupCreateModal({ isOpen, onClose }: GroupCreateModalProps) {
                   className="w-full bg-black/50 border border-amber-500/30 rounded-sm px-3 py-2 text-xs text-amber-50 focus:border-amber-500 focus:bg-amber-500/5 focus:outline-none transition-all appearance-none cursor-pointer"
                 >
                   <option value="">-- SELECT_MEMBER --</option>
-                  {mockMembers.map(m => (
+                  {members.map(m => (
                     <option key={m.id} value={m.id}>{m.name} ({m.department} - {m.position})</option>
                   ))}
                 </select>

@@ -16,12 +16,15 @@ import {
   mockServerStatus,
   mockUsers,
   mockCommitRankings,
-  mockSchedules,
   mockQuote,
   mockChallenges,
-  getRandomServerStatus,
 } from "@/lib/mockData";
+import { fetchServerStatus, fetchAnnouncements } from "@/lib/api";
+import { useScheduleStore } from "@/stores/scheduleStore";
+import { useAuthStore } from "@/stores/authStore";
 import type { ServerStatus as ServerStatusType } from "@/types";
+import Link from "next/link";
+import clsx from "clsx";
 
 // 앱 탭 유지 동안 한 번만 실행되도록 하는 모듈 전역 변수
 let dashboardInitialBootDone = false;
@@ -35,25 +38,45 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
+  const { user } = useAuthStore();
+  const { schedules, loadSchedules } = useScheduleStore();
+  
   const [isConnected, setIsConnected] = useState(true);
   const [serverStatus, setServerStatus] = useState<ServerStatusType>(mockServerStatus);
-  // 이미 부팅 애니메이션이 완료되었다면 false로 시작
   const [showBoot, setShowBoot] = useState(!dashboardInitialBootDone);
+  const [liveMonitoring, setLiveMonitoring] = useState(true);
 
-  // Simulate real-time server status updates
+  // Load schedules on mount
   useEffect(() => {
-    const interval = setInterval(() => {
-      setServerStatus(getRandomServerStatus());
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    loadSchedules();
+  }, [loadSchedules]);
 
-  // Simulate connection status
+  // Sync server status via API polling (30s interval for mini PC safety)
+  useEffect(() => {
+    if (!liveMonitoring) return;
+
+    const updateStatus = async () => {
+      try {
+        const status = await fetchServerStatus();
+        setServerStatus(status);
+      } catch (err) {
+        console.error("Failed to sync server status:", err);
+      }
+    };
+
+    // First load
+    updateStatus();
+
+    const interval = setInterval(updateStatus, 30000);
+    return () => clearInterval(interval);
+  }, [liveMonitoring]);
+
+  // Simulate connection status check (passive check, 20s interval)
   useEffect(() => {
     const checkConnection = () => {
-      setIsConnected(Math.random() > 0.05);
+      setIsConnected(Math.random() > 0.02);
     };
-    const interval = setInterval(checkConnection, 10000);
+    const interval = setInterval(checkConnection, 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -72,6 +95,32 @@ function DashboardContent() {
     <>
       <PageLayout activePage="dashboard" isConnected={isConnected}>
         <div className="lg:h-full grid gap-3 lg:gap-4 grid-rows-[auto_auto_auto] lg:grid-rows-[auto_1fr_1fr] pb-4 lg:pb-0">
+          
+          {/* Header Sub Bar / Controls */}
+          <div className="flex justify-between items-center px-2 py-1.5 border-b border-[var(--color-primary)]/10 font-mono text-[9px] uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-4">
+              <span className="text-[var(--color-text-secondary)]">// SYSTEM_NODE: ACTIVE</span>
+              {user?.role === "admin" && (
+                <Link href="/admin" className="text-amber-400 hover:underline font-bold animate-pulse">
+                  [ADMIN_PANEL_ROOT]
+                </Link>
+              )}
+            </div>
+            
+            <button 
+              onClick={() => setLiveMonitoring(!liveMonitoring)}
+              className={clsx(
+                "px-2.5 py-0.5 border rounded-sm transition-all flex items-center gap-1.5 cursor-pointer",
+                liveMonitoring 
+                  ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10" 
+                  : "border-red-500/30 text-red-500 bg-red-500/5 hover:bg-red-500/10"
+              )}
+            >
+              <span className={clsx("w-1.5 h-1.5 rounded-full", liveMonitoring ? "bg-emerald-500 animate-pulse" : "bg-red-500")} />
+              LIVE_MONITORING: {liveMonitoring ? "ACTIVE" : "SUSPENDED"}
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
             <div className="lg:col-span-8">
               <CompactStatsGrid data={serverStatus} delay={0.1} />
@@ -100,7 +149,7 @@ function DashboardContent() {
               <BroadcastPanel delay={0.6} />
             </div>
             <div className="lg:col-span-4 min-h-[180px]">
-              <EventPreview schedules={mockSchedules} delay={0.7} />
+              <EventPreview schedules={schedules} delay={0.7} />
             </div>
           </div>
         </div>
@@ -111,7 +160,39 @@ function DashboardContent() {
   );
 }
 
+import type { Announcement } from "@/types";
+
 function BroadcastPanel({ delay = 0 }: { delay?: number }) {
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBroadcasts = async () => {
+      try {
+        const data = await fetchAnnouncements();
+        setAnnouncements(data);
+      } catch (err) {
+        console.error("Failed to load broadcasts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBroadcasts();
+    
+    // Poll for new broadcasts every 30 seconds
+    const interval = setInterval(loadBroadcasts, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "urgent": return "text-red-400";
+      case "important": return "text-amber-400";
+      default: return "text-cyan-400";
+    }
+  };
+
   return (
     <motion.div
       className="h-full border border-[var(--color-primary)]/10 bg-[var(--color-bg-dark)] p-3 rounded-sm panel-corners flex flex-col"
@@ -119,7 +200,7 @@ function BroadcastPanel({ delay = 0 }: { delay?: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
     >
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-2">
         <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
           System Broadcasts
         </h3>
@@ -128,22 +209,48 @@ function BroadcastPanel({ delay = 0 }: { delay?: number }) {
         </svg>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center opacity-50">
-          <motion.div
-            className="w-8 h-8 mx-auto mb-2 border border-[var(--color-primary)]/20 rounded-full flex items-center justify-center"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          >
-            <div className="w-2 h-2 bg-[var(--color-primary)]/30 rounded-full" />
-          </motion.div>
-          <p className="text-[10px] uppercase tracking-widest">
-            Monitoring Active
-          </p>
-          <p className="text-[8px] text-[var(--color-text-secondary)] mt-1">
-            No critical broadcasts
-          </p>
-        </div>
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-2 pr-1">
+        {loading ? (
+          <div className="h-full flex items-center justify-center py-6 text-center opacity-30 text-[9px] uppercase tracking-widest">
+            Fetching Broadcasts...
+          </div>
+        ) : announcements.length > 0 ? (
+          announcements.slice(0, 3).map((ann) => (
+            <div 
+              key={ann.id}
+              className="border-b border-white/5 pb-2 last:border-b-0 last:pb-0 text-left font-mono"
+            >
+              <div className="flex justify-between items-center text-[8px] opacity-40 uppercase mb-0.5">
+                <span>@{ann.author || "system"}</span>
+                <span>{new Date(ann.createdAt).toLocaleDateString()}</span>
+              </div>
+              <h4 className={clsx("text-[10px] font-bold uppercase tracking-wide", getPriorityColor(ann.priority))}>
+                [{ann.priority.toUpperCase()}] {ann.title}
+              </h4>
+              <p className="text-[9px] text-neutral-400 mt-0.5 leading-relaxed line-clamp-2">
+                {ann.content}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center opacity-40 py-6">
+              <motion.div
+                className="w-6 h-6 mx-auto mb-1.5 border border-[var(--color-primary)]/20 rounded-full flex items-center justify-center"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="w-1.5 h-1.5 bg-[var(--color-primary)]/30 rounded-full" />
+              </motion.div>
+              <p className="text-[9px] uppercase tracking-widest">
+                Monitoring Active
+              </p>
+              <p className="text-[7px] text-[var(--color-text-secondary)] mt-0.5">
+                No active broadcast packets detected
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );
